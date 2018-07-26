@@ -4,11 +4,11 @@
     <el-header style="height:80px;text-align: right; font-size: 12px;padding:0px">
     <el-menu :default-active="headindex" class="el-menu-demo" mode="horizontal" >
     <img src="../assets/ZYPC.png" class="img">
-     <el-menu-item index="1" style="margin:20px 50px 0px 50px;padding:0px 10px;height:40px;text-align:center;line-height:40px;"><router-link to='homepage' class="item" @click.native="head()">首页</router-link></el-menu-item>
-     <el-menu-item index="2" style="margin:20px 50px 0px 50px;padding:0px 10px;height:40px;text-align:center;line-height:40px;"><router-link to='editor' class="item"  @click.native="head()">写周报</router-link></el-menu-item>
-     <el-menu-item index="3" style="margin:20px 50px 0px 50px;padding:0px 10px;height:40px;text-align:center;line-height:40px;"><router-link to='draft' class="item"  @click.native="head()">草稿箱</router-link></el-menu-item>
-     <el-menu-item index="4" style="margin:20px 50px 0px 50px;padding:0px 10px;height:40px;text-align:center;line-height:40px;"><router-link to='collection' class="item"  @click.native="head()">我的收藏</router-link></el-menu-item>
-     <el-menu-item index="5" style="margin:20px 50px 0px 50px;padding:0px 10px;height:40px;text-align:center;line-height:40px;"><router-link to='update' class="item"  @click.native="head()">已上传周报</router-link></el-menu-item> 
+     <el-menu-item index="1" style="margin:20px 50px 0px 50px;padding:0px 10px;height:40px;text-align:center;line-height:40px;"><router-link to='homepage' class="item" @click.native="heads('1')">首页</router-link></el-menu-item>
+     <el-menu-item index="2" style="margin:20px 50px 0px 50px;padding:0px 10px;height:40px;text-align:center;line-height:40px;"><router-link to='editor' class="item"  @click.native="heads('2')">写周报</router-link></el-menu-item>
+     <el-menu-item index="3" style="margin:20px 50px 0px 50px;padding:0px 10px;height:40px;text-align:center;line-height:40px;"><router-link to='draft' class="item"  @click.native="heads('3')">草稿箱</router-link></el-menu-item>
+     <el-menu-item index="4" style="margin:20px 50px 0px 50px;padding:0px 10px;height:40px;text-align:center;line-height:40px;"><router-link to='collection' class="item"  @click.native="heads('4')">我的收藏</router-link></el-menu-item>
+     <el-menu-item index="5" style="margin:20px 50px 0px 50px;padding:0px 10px;height:40px;text-align:center;line-height:40px;"><router-link to='update' class="item"  @click.native="heads('5')">已上传周报</router-link></el-menu-item> 
      <el-menu-item index="7" style="margin:20px 60px 0px 20px;padding:0px 10px;height:40px;text-align:center;line-height:40px;float:right;"><router-link to='home' class="item"><img src="../assets/logo.png" class="headimg"></router-link></el-menu-item>
      <el-menu-item index="6" style="margin:20px 20px 0px 20px;padding:0px 10px;height:40px;text-align:center;line-height:40px;float:right;"><router-link to='home' class="item"><img src="../assets/message.png" class="messageimg"></img></router-link></el-menu-item>
     
@@ -29,13 +29,12 @@
     <el-submenu v-for="(da,num) in all" :key="num" :index="da.index">
 
         <template slot="title" >
-          <i class="el-icon-location"></i>
-          <span>{{da.zuname}}</span>
+          <span class="teamname">{{da.zuname}}</span>
         </template>
 
         <el-menu-item-group>
-          <router-link :to="{path:'peoplewrite',query:{name:c.name}}" @click.native="aside()" v-for="(c,num) in da.zu" :key="num" class="route">
-          <el-menu-item :index="c.index" >{{c.name}}</el-menu-item>
+          <router-link :to="{path:'peoplewrite',query:{name:c.name}}" @click.native="asides(c.index)" v-for="(c,num) in da.zu" :key="num" class="route">
+          <el-menu-item :index="c.index" ><span class="teampeople">{{c.name}}</span></el-menu-item>
           </router-link>
         </el-menu-item-group>
 
@@ -59,18 +58,20 @@
           return {
               headindex:'1',
               asideindex:'0',
+              head:1,
+              aside:1,
               all:[
                   {
-                      zuname:'aa',
+                      zuname:'开发组',
                       index:'a',
                       zu:[
                           {
                               index:'1',
-                          name:'jweewsdssssssj'
+                          name:'某某某'
                           },
                           {
                               index:'2',
-                              name:"wewwel"
+                              name:"谁谁谁"
                           }
                       ]
                   },
@@ -87,24 +88,64 @@
                               name:"ll"
                           }
                       ]
-                  }
+                  },{
+                      zuname:'bb',
+                      index:'b',
+                      zu:[
+                          {
+                              index:'3',
+                          name:'jffj'
+                          },
+                          {
+                              index:'4',
+                              name:"ll"
+                          }
+                      ]
+                  },{
+                      zuname:'bb',
+                      index:'b',
+                      zu:[
+                          {
+                              index:'3',
+                          name:'jffj'
+                          },
+                          {
+                              index:'4',
+                              name:"ll"
+                          }
+                      ]
+                  },
+                  {
+                      zuname:'bb',
+                      index:'b',
+                      zu:[
+                          {
+                              index:'3',
+                          name:'jffj'
+                          },
+                          {
+                              index:'4',
+                              name:"ll"
+                          }
+                      ]
+                  },
+
               ]
           }
       },
     methods: {
-      handleOpen(key, keyPath) {
-        console.log(key, keyPath);
-      },
-      handleClose(key, keyPath) {
-        console.log(key, keyPath);
-      },
-      aside(){
+      asides(num){
+          this.asideindex=num;
           this.headindex='0';
       },
-      head(){
-          this.asideindex='3';
+      heads(num){
+          this.headindex=num;
+          this.asideindex='0';
       }
-    }
+    },
+    mounted() {
+        this.$router.push('homepage');
+    },
   }
 </script>
 <style>
@@ -130,6 +171,12 @@
     width:60px;
     height:60px;
     margin-top:-10px;
+}
+.teamname{
+    margin-left:20px;
+}
+.teampeople{
+    margin-left:50px;
 }
 
 </style>
