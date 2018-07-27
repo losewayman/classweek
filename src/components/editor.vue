@@ -1,7 +1,7 @@
 <template>
 <div>
-<el-button type="primary" size="small">上传<i class="el-icon-upload el-icon--right"></i></el-button>
-<el-button type="primary"  icon="el-icon-edit"></el-button>
+<el-button disabled size='small' style="background-color:#0945C4;font-size:12px;">上传</el-button>
+<el-button disabled size='small' style="background-color:#a1a1a1;font-size:12px;">保存草稿</el-button>
 <div id="editorElem" style="text-align:left"></div>
    <button v-on:click="getContent">查看内容</button>
    </div>
