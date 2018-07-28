@@ -6,5 +6,4 @@
 export default {
     
 }
-console.log("ff");
 </script>

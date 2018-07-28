@@ -16,53 +16,44 @@
     </el-header>
      <el-container>
     <el-aside  width="290px" style="background-color: rgb(238, 211, 246)">
-    <el-row class="tac">
-  <el-col :span="24">
-    
+
+
+    <el-row class="tac" v-show="asidemenu">
+    <el-col :span="24">
     <el-menu :default-active="asideindex" class="el-menu-vertical-demo" active-text-color="#000000">  
-    <el-submenu v-for="(da,num) in all" :key="num" :index="da.index">   
+    <el-submenu v-for="(da,nums) in all" :key="nums" :index='nums.toString()'>   
         <template slot="title" >     
           <span class="teamname"><strong>{{da.zuname}}</strong></span>
         </template>
         <el-menu-item-group class="route">    
-
-
           <el-menu-item :index="c.index"  @click.native="asides(c.index)" :key="c.index" v-for="(c,num) in da.zu"><span class="teampeople">{{c.name}}</span></el-menu-item>
-
-
         </el-menu-item-group>
     </el-submenu>
-
-      
-
     </el-menu>
-  </el-col>
-</el-row>
+    </el-col>
+    </el-row>
+
+
     </el-aside>
      <el-main style="padding:0px;">
-      <router-view v-bind:msg="childmsg"></router-view>
+      <router-view v-bind:msg='{xuehao,roots,childmsg}'></router-view>
      </el-main>
       </el-container>
     </el-container>
 </template>
 <script>
   export default {
-
-// <router-link :to="{path:'peoplewrite',query:{name:c.name}}" @click.native="asides(c.index)" v-for="(c,num) in da.zu" :key="num" class="route">
-//           <el-menu-item :index="c.index" ><span class="teampeople">{{c.name}}</span></el-menu-item>
-//           </router-link>
-
       data(){
           return {
-              headindex:'1',
-              asideindex:'0',
-              redicon:true,
-              head:1,
-              aside:1,
-              name:'',
-              xuehao:'123',
+              headindex:'1',    //head的选中控制
+              asideindex:'0',       //aside的选中控制
+              redicon:true,   //控制红点
+              name:'',    //名字
+              xuehao:'123',    //学号
               childmsg:'',
-              all:[
+              roots:'',    //权限
+              asidemenu:true,   //控制左侧菜单隐藏显示
+              all:[         //所有分组数据
                   {
                       zuname:'开发组',
                       index:'a',
@@ -117,20 +108,6 @@
                           }
                       ]
                   },
-                  {
-                      zuname:'bb',
-                      index:'b',
-                      zu:[
-                          {
-                              index:'3',
-                          name:'jffj'
-                          },
-                          {
-                              index:'4',
-                              name:"ll"
-                          }
-                      ]
-                  },
 
               ]
           }
@@ -155,7 +132,6 @@
         //     method:'post',
         //     url:'',
         // })
-        console.log("dd");
         this.$router.push('homepage');
     },
   }

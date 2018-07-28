@@ -17,16 +17,15 @@ export default {
       props:['msg'],
       data () {
         return {
-          content:'',
-          txt:'',
-          editor:'',
-          draft:'',
-          id:''
+          content:'',    //带样式文本
+          txt:'',    //纯文本
+          editor:'',    //编辑器对象
+          draft:'',    //页面初始文本
+          id:''     //本篇周报id
         }
       },
       methods: {
         upload(status){
-          console.log('jj',this.editor.txt.html());
           let _this=this;
           _this.$http({
             url:'',
@@ -34,7 +33,7 @@ export default {
             data:{
               'content':_this.editor.txt.html(),
               'txt':_this.editor.txt.text(),
-              'uid':_this.msg,
+              'uid':_this.msg.childmsg,
               'status':status,
               'id':_this.id,
             }
@@ -88,5 +87,6 @@ export default {
   border:1px solid #a1a1a1;
   margin:15px;
   z-index:1000 !important;
+  
 }
 </style>

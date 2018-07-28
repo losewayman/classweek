@@ -3,16 +3,18 @@
 <el-card class="box-card" v-for="(datas,index) in data" :key="datas.uid">
   <div slot="header" class="clearfix">
     <span>{{datas.createDate}}</span>
-    <el-button style="float: right; padding: 3px 0" type="text" @click="deletes(datas.id)">删除</el-button>
+    <el-button style="float: right; padding: 3px 0; color:#909399" type="text" @click="deletes(datas.id,index)">删除</el-button>
   </div>
   <div class="texts item" @click="readtext(datas.content,datas.id)">
     {{datas.txt}}
   </div>
 </el-card>
+
+<!--测试数据-->
 <el-card class="box-card card" >
   <div slot="header" class="clearfix">
     <span>卡片名称</span>
-    <el-button style="float: right; padding: 3px 0" type="text">删除</el-button>
+    <el-button style="float: right; padding: 3px 0px; color:#909399" type="text" @click="deletes(1,2)">删除</el-button>
   </div>
   <div class="texts item" style="" @click="readtext('鬼魂四处开花的大家富士康与巍峨呃呃呃呃呃呃呃呃呃呃呃呃呃呃呃呃无阿覅的时间急急急急急急急急急就回家回家回家胡日日日日日日日日日日日日日日日日日日俄日好卡好卡好卡好卡好卡好卡好卡好卡和',0)">
     {{'鬼魂四处开花的大家富士康与巍峨呃呃呃呃呃呃呃呃呃呃呃呃呃呃呃呃无阿覅的时间急急急急急急急急急就回家回家回家胡日日日日日日日日日日日日日日日日日日俄日好卡好卡好卡好卡好卡好卡好卡好卡和'}}
@@ -21,12 +23,15 @@
 <el-card class="box-card card" >
   <div slot="header" class="clearfix">
     <span>卡片名称</span>
-    <el-button style="float: right; padding: 3px 0" type="text">删除</el-button>
+    <el-button style="float: right; padding: 3px 0; color:#909399" type="text">删除</el-button>
   </div>
   <div class="texts item" style="">
-    {{'鬼魂四处开花的大家富士康与巍峨呃呃呃呃呃呃呃呃呃呃呃呃呃呃呃呃无阿覅的时间急急急急急急急急急就回家回家回家胡日日日日日日日日日日日日日日日日日日俄日好卡好卡好卡好卡好卡好卡好卡好卡和'}}
+    {{'鬼魂四处开花的大家日日日日日日俄日好卡好卡好卡好卡好卡好卡好卡好卡和'}}
   </div>
 </el-card>
+
+
+
 </div>
 </template>
 <script>
@@ -34,32 +39,43 @@ export default{
     props:['msg'],
     data(){
         return{
-            data:'',
+            data:'',    //登陆用户的草稿数据
         }
     },
     methods:{
-        deletes(id){
+        deletes(id,index){
+            console.log('a');
             let _this=this;
-        _this.$http({
-            method:'post',
-            //url:'article/getNoActicleList.action',
-            data:{
-                'id':id,
-            }
-        })
-        .then(function(res){
-            this.data=res.data;
-            console.log(res.data);
-        })
-        .catch(function(error){
-            console.log(error);
-        })
+            _this.$http({
+                method:'post',
+                //url:'article/getNoActicleList.action',
+                data:{
+                    'id':id,
+                }
+            })
+            .then(function(res){
+                _this.data=res.data.data;
+                if(res.data.status=='200'){
+                    this.data.splice(index,1);
+                    this.$notify({
+                        message: '删除成功！',
+                        offset: 50,
+                        type:'success',
+                        duration:1500,
+                        position: 'bottom-right'
+                        });
+                }
+            })
+            .catch(function(error){
+                console.log(error);
+            })
         },
         readtext(text,id){
             localStorage.setItem('id',id);
             localStorage.setItem('wen',text);
             this.$router.push('editor');
         }
+        
     },
     mounted() {
         console.log(this.msg);
@@ -68,7 +84,7 @@ export default{
             method:'post',
             //url:'article/getNoActicleList.action',
             data:{
-                'uid':this.msg,
+                'uid':this.childmsg,
             }
         })
         .then(function(res){
@@ -97,7 +113,7 @@ export default{
   .item {
     height:30px;
     line-height:30px;
-    text-align:center;
+    text-align:left;
     white-space: nowrap;
     text-overflow:ellipsis;
     overflow:hidden;

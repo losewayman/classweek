@@ -7,6 +7,7 @@ import draft from '../components/draft.vue'
 import update from '../components/update.vue'
 import collection from '../components/collection.vue'
 import peoplewrite from '../components/peoplewrite.vue'
+import weekly from '../components/weekly.vue'
 import notFound from '../components/notFound.vue'
 
 Vue.use(Router)
@@ -23,6 +24,7 @@ export default new Router({
                 { name: 'collection', path: '/collection', component: collection },
                 { name: 'update', path: '/update', component: update },
                 { name: 'draft', path: '/draft', component: draft },
+                { name: 'weekly', path: '/weekly', component: weekly },
                 { name: 'peoplewrite', path: '/peoplewrite', component: peoplewrite },
 
             ]
