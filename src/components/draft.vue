@@ -1,10 +1,129 @@
 <template>
 <div>
-草稿箱
+<el-card class="box-card" v-for="(datas,index) in data" :key="datas.uid">
+  <div slot="header" class="clearfix">
+    <span>{{datas.createDate}}</span>
+    <el-button style="float: right; padding: 3px 0" type="text" @click="deletes(datas.id)">删除</el-button>
+  </div>
+  <div class="texts item" @click="readtext(datas.content,datas.id)">
+    {{datas.txt}}
+  </div>
+</el-card>
+<el-card class="box-card card" >
+  <div slot="header" class="clearfix">
+    <span>卡片名称</span>
+    <el-button style="float: right; padding: 3px 0" type="text">删除</el-button>
+  </div>
+  <div class="texts item" style="" @click="readtext('鬼魂四处开花的大家富士康与巍峨呃呃呃呃呃呃呃呃呃呃呃呃呃呃呃呃无阿覅的时间急急急急急急急急急就回家回家回家胡日日日日日日日日日日日日日日日日日日俄日好卡好卡好卡好卡好卡好卡好卡好卡和',0)">
+    {{'鬼魂四处开花的大家富士康与巍峨呃呃呃呃呃呃呃呃呃呃呃呃呃呃呃呃无阿覅的时间急急急急急急急急急就回家回家回家胡日日日日日日日日日日日日日日日日日日俄日好卡好卡好卡好卡好卡好卡好卡好卡和'}}
+  </div>
+</el-card>
+<el-card class="box-card card" >
+  <div slot="header" class="clearfix">
+    <span>卡片名称</span>
+    <el-button style="float: right; padding: 3px 0" type="text">删除</el-button>
+  </div>
+  <div class="texts item" style="">
+    {{'鬼魂四处开花的大家富士康与巍峨呃呃呃呃呃呃呃呃呃呃呃呃呃呃呃呃无阿覅的时间急急急急急急急急急就回家回家回家胡日日日日日日日日日日日日日日日日日日俄日好卡好卡好卡好卡好卡好卡好卡好卡和'}}
+  </div>
+</el-card>
 </div>
 </template>
 <script>
 export default{
-    
+    props:['msg'],
+    data(){
+        return{
+            data:'',
+        }
+    },
+    methods:{
+        deletes(id){
+            let _this=this;
+        _this.$http({
+            method:'post',
+            //url:'article/getNoActicleList.action',
+            data:{
+                'id':id,
+            }
+        })
+        .then(function(res){
+            this.data=res.data;
+            console.log(res.data);
+        })
+        .catch(function(error){
+            console.log(error);
+        })
+        },
+        readtext(text,id){
+            localStorage.setItem('id',id);
+            localStorage.setItem('wen',text);
+            this.$router.push('editor');
+        }
+    },
+    mounted() {
+        console.log(this.msg);
+        let _this=this;
+        _this.$http({
+            method:'post',
+            //url:'article/getNoActicleList.action',
+            data:{
+                'uid':this.msg,
+            }
+        })
+        .then(function(res){
+            this.data=res.data;
+            console.log(res.data);
+        })
+        .catch(function(error){
+            console.log(error);
+        })
+        // _this.$http({
+        //     url:'/api/get/message?api=house',
+        //     method:'get',
+        // }).then(function (response) {
+        //     console.log('d',response);
+        // }).catch(function (error) {
+        //         console.log(error);
+        // })
+    },
 }
 </script>
+<style>
+  .texts {
+    font-size: 13px;
+  }
+
+  .item {
+    height:30px;
+    line-height:30px;
+    text-align:center;
+    white-space: nowrap;
+    text-overflow:ellipsis;
+    overflow:hidden;
+  }
+  .card{
+      border-width:0px 0px 1px 0px !important;
+      margin-left:100px !important;
+  }
+.card .el-card__body{
+    padding:5px 30px 10px 30px !important;
+    border:0px !important;
+}
+.card .el-card__header{
+    padding:10px 30px 0px 30px !important;
+    border:0px !important;
+}
+  .clearfix:before,
+  .clearfix:after {
+    display: table;
+    content: "";
+  }
+  .clearfix:after {
+    clear: both
+  }
+
+  .box-card {
+    width: 850px;
+  }
+</style>

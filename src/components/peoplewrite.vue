@@ -8,6 +8,7 @@
 </template>
 <script>
 export default{
+    props:['msg'],
     data(){
         return {
             name:''
@@ -16,10 +17,13 @@ export default{
     watch:{
         '$route':function(){
             this.name=this.$route.query.name;
+        },
+        'msg':function(){    //后续多次
+            console.log(this.msg);
         }
     },
-    mounted() {
-        this.name=this.$route.query.name;
+    mounted() {   //第一次
+        console.log(this.msg);
     },
 }
 </script>
