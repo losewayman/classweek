@@ -1,6 +1,6 @@
 <template>
 <div>
-<el-card class="box-card" v-for="(datas,index) in data" :key="datas.id">
+<el-card class="box-card" v-for="(datas,index) in data" :key="datas.id" shadow="never" :body-style="{padding:'5px 30px 10px 30px' , border:'0px'}">
   <div slot="header" class="clearfix">
     <span>{{datas.createDate}}</span>
   </div>
@@ -12,7 +12,7 @@
 
 
 <!--测试数据-->
-<el-card class="box-card card" >
+<el-card class="box-card card" shadow="never" :body-style="{padding:'5px 30px 10px 30px' , border:'0px'}">
   <div slot="header" class="clearfix">
     <span>卡片名称</span>
   </div>
@@ -20,7 +20,7 @@
     {{'鬼魂俄日好卡好卡好卡好卡好卡好卡好卡好卡和'}}
   </div>
 </el-card>
-<el-card class="box-card card" >
+<el-card class="box-card card" shadow="never" :body-style="{padding:'5px 30px 10px 30px' , border:'0px'}">
   <div slot="header" class="clearfix">
     <span>卡片名称</span>
   </div>
@@ -98,7 +98,7 @@ export default{
     },
 }
 </script>
-<style>
+<style scoped>
   .texts {
     font-size: 13px;
   }
@@ -111,18 +111,8 @@ export default{
     text-overflow:ellipsis;
     overflow:hidden;
   }
-  .card{
-      border-width:0px 0px 1px 0px !important;
-      margin-left:100px !important;
-  }
-.card .el-card__body{
-    padding:5px 30px 10px 30px !important;
-    border:0px !important;
-}
-.card .el-card__header{
-    padding:10px 30px 0px 30px !important;
-    border:0px !important;
-}
+ 
+
   .clearfix:before,
   .clearfix:after {
     display: table;
@@ -135,4 +125,15 @@ export default{
   .box-card {
     width: 800px;
   }
+  .card{
+      border-width:0px 0px 1px 0px;
+      margin:0px 0px 0px 100px;
+  }
+  
+</style>
+<style> 
+.el-card__header{
+    padding:10px 30px 0px 30px;
+    border:0px;
+}
 </style>

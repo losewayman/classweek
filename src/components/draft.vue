@@ -1,6 +1,6 @@
 <template>
 <div>
-<el-card class="box-card" v-for="(datas,index) in data" :key="datas.id">
+<el-card class="box-card" v-for="(datas,index) in data" :key="datas.id" shadow="never" :body-style="{padding:'5px 30px 10px 30px' , border:'0px'}">
   <div slot="header" class="clearfix">
     <span>{{datas.createDate}}</span>
     <el-button style="float: right; padding: 3px 0; color:#909399" type="text" @click="deletes(datas.id,index)">删除</el-button>
@@ -11,7 +11,7 @@
 </el-card>
 
 <!--测试数据-->
-<el-card class="box-card card" >
+<el-card class="box-card card" shadow="never" :body-style="{padding:'5px 30px 10px 30px' , border:'0px'}">
   <div slot="header" class="clearfix">
     <span>卡片名称</span>
     <el-button style="float: right; padding: 3px 0px; color:#909399" type="text" @click="deletes(1,2)">删除</el-button>
@@ -20,7 +20,7 @@
     {{'鬼魂四处开花的大家富士康与巍峨呃呃呃呃呃呃呃呃呃呃呃呃呃呃呃呃无阿覅的时间急急急急急急急急急就回家回家回家胡日日日日日日日日日日日日日日日日日日俄日好卡好卡好卡好卡好卡好卡好卡好卡和'}}
   </div>
 </el-card>
-<el-card class="box-card card" >
+<el-card class="box-card card" shadow="never" :body-style="{padding:'5px 30px 10px 30px' , border:'0px'}">
   <div slot="header" class="clearfix">
     <span>卡片名称</span>
     <el-button style="float: right; padding: 3px 0; color:#909399" type="text">删除</el-button>
@@ -102,7 +102,7 @@ export default{
     },
 }
 </script>
-<style>
+<style scoped>
   .texts {
     font-size: 13px;
   }
@@ -117,16 +117,9 @@ export default{
   }
   .card{
       border-width:0px 0px 1px 0px !important;
-      margin-left:100px !important;
+      margin:0px 0px 0px 100px!important;
   }
-.card .el-card__body{
-    padding:5px 30px 10px 30px !important;
-    border:0px !important;
-}
-.card .el-card__header{
-    padding:10px 30px 0px 30px !important;
-    border:0px !important;
-}
+
   .clearfix:before,
   .clearfix:after {
     display: table;
@@ -139,4 +132,10 @@ export default{
   .box-card {
     width: 800px;
   }
+</style>
+<style>
+.el-card__header{
+    padding:10px 30px 0px 30px;
+    border:0px;
+}
 </style>

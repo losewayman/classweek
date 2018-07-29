@@ -166,8 +166,9 @@
 .headright{
     width:48px;
     height:48px; 
-    float:right !important;
-    margin-top:-4px;margin:20px 60px 0px 20px !important;
+    float:right;
+    margin-top:-4px;
+    margin:20px 60px 0px 20px;
     
 }
 .headleft{
