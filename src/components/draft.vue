@@ -1,11 +1,11 @@
 <template>
 <div>
-<el-card class="box-card" v-for="(datas,index) in data" :key="datas.uid">
+<el-card class="box-card" v-for="(datas,index) in data" :key="datas.id">
   <div slot="header" class="clearfix">
     <span>{{datas.createDate}}</span>
     <el-button style="float: right; padding: 3px 0; color:#909399" type="text" @click="deletes(datas.id,index)">删除</el-button>
   </div>
-  <div class="texts item" @click="readtext(datas.content,datas.id)">
+  <div class="texts item" @click="readtext(datas.content,datas.id,datas.uid)">
     {{datas.txt}}
   </div>
 </el-card>
@@ -70,15 +70,12 @@ export default{
                 console.log(error);
             })
         },
-        readtext(text,id){
-            localStorage.setItem('id',id);
-            localStorage.setItem('wen',text);
+        readtext(text,id,uid){    //text为文章文本内容，id为文章id,uid为文章作者id
+            this.$emit('child-say',id,text,uid,'2');
             this.$router.push('editor');
-        }
-        
+        } 
     },
     mounted() {
-        console.log(this.msg);
         let _this=this;
         _this.$http({
             method:'post',

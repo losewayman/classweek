@@ -4,7 +4,7 @@
   <div slot="header" class="clearfix">
     <span>{{datas.createDate}}</span>
   </div>
-  <div class="texts item" @click="readtext(datas.content,datas.id)">
+  <div class="texts item" @click="readtext(datas.content,datas.id,datas.uid)">
     {{datas.txt}}
   </div>
 </el-card>
@@ -43,9 +43,10 @@ export default{
         }
     },
     methods:{
-        readtext(text,id){
-            localStorage.setItem('weeklyid',id);
-            localStorage.setItem('weeklywen',text);
+        readtext(text,id,uid){
+            this.$emit('child-say',id,text,uid,'1');
+            // localStorage.setItem('weeklyid',id);
+            // localStorage.setItem('weeklywen',text);
             this.$router.push('weekly');
         }
     },

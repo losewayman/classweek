@@ -21,7 +21,8 @@ export default {
           txt:'',    //纯文本
           editor:'',    //编辑器对象
           draft:'',    //页面初始文本
-          id:''     //本篇周报id
+          id:'',     //本篇周报id
+          uid:'',    //本篇周报作者学号
         }
       },
       methods: {
@@ -48,14 +49,13 @@ export default {
       },
       mounted() {
         let _this=this;
-       
+       console.log(this.msg);
         var editor = new E('#div1', '#div2')
         this.editor=editor;
         editor.create();
-        this.id=localStorage.getItem('id');
-        this.draft=localStorage.getItem('wen');
-        localStorage.removeItem('id');
-        localStorage.removeItem('wen');
+        this.id=this.msg.childmsg.id;
+        this.uid=this.msg.childmsg.uid;
+        this.draft=this.msg.childmsg.text;
         this.editor.txt.html(this.draft);
 
       },

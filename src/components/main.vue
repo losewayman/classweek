@@ -36,7 +36,7 @@
 
     </el-aside>
      <el-main style="padding:0px;">
-      <router-view v-bind:msg='{xuehao,roots,childmsg}'></router-view>
+      <router-view v-bind:msg='{xuehao,roots,childmsg}' v-on:child-say="ddd"></router-view>
      </el-main>
       </el-container>
     </el-container>
@@ -124,6 +124,11 @@
           this.asideindex='0';
           this.childmsg=msg;
           this.$router.push(rou);
+      },
+      ddd(id,text,uid,headindex){
+          this.childmsg={'id':id,'text':text,'uid':uid};
+          if(headindex=='2')
+          this.headindex=headindex;
       }
     },
     mounted() {
