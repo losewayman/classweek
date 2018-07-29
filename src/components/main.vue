@@ -1,7 +1,7 @@
 <template>
 <el-container style="height: 700px; border: 1px solid #eee;">
 
-    <el-header style="height:80px;text-align: right; font-size: 12px;padding:0px;overflow:hidden">
+    <el-header style="height:80px;text-align: right; font-size: 12px;padding:0px;overflow:hidden;">
     <el-menu :default-active="headindex" class="el-menu-demo" mode="horizontal" >
     <img src="../assets/ZYPC.png" class="img">
      <el-menu-item index="1" class="head" @click.native="heads('1',xuehao,'homepage')"><strong>首页</strong></el-menu-item>
@@ -9,7 +9,7 @@
      <el-menu-item index="3" class="head" @click.native="heads('3',xuehao,'draft')"><strong>草稿箱</strong></el-menu-item>
      <el-menu-item index="4" class="head" @click.native="heads('4',xuehao,'collection')"><strong>我的收藏</strong></el-menu-item>
      <el-menu-item index="5" class="head" @click.native="heads('5',xuehao,'update')"><strong>已上传周报</strong></el-menu-item> 
-     <el-menu-item index="7" class="head headright"><img src="../assets/logo.png" class="headimg"></el-menu-item>
+     <img src="../assets/logo.png" class="headright">
      <el-menu-item index="6" class="head headleft"><el-badge :is-dot='redicon' class="redicon"><img src="../assets/message.png" class="messageimg"></img></el-badge></el-menu-item>
     
     </el-menu>
@@ -152,15 +152,18 @@
 }
 .head{
     font-size:15px !important;
-    margin:20px 50px 0px 50px !important;
+    margin:20px 30px 0px 30px !important;
     padding:0px 10px !important;
     height:40px !important;
     text-align:center !important;
     line-height:40px !important;
 }
 .headright{
+    width:48px;
+    height:48px; 
     float:right !important;
-    margin:20px 60px 0px 20px !important;
+    margin-top:-4px;margin:20px 60px 0px 20px !important;
+    
 }
 .headleft{
     float:right !important;
@@ -170,11 +173,6 @@
     width:25px;
     height:25px;
     margin-top:-20px;
-}
-.headimg{
-    width:48px;
-    height:48px;
-    margin-top:-4px;
 }
 .teamname{
     margin-left:20px;

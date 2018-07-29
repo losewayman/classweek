@@ -6,6 +6,9 @@
 <el-button v-show="replyshow" size='small' style="margin:10px;background-color:#0945C4;font-size:12px;color:white" @click="reply()">回复</el-button>
 <el-button v-show="collectshow" size='small' style="margin:10px;background-color:#f2f2f2;font-size:12px;border:1px solid #a1a1a1;color:black;" @click="collect()">收藏</el-button>
 </div >
+<div>
+<el-input type="textarea" v-model="content"></el-input>
+</div>
 <div class="content">{{weeklywen}}</div>
 </div>
 </template>
