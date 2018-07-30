@@ -3,14 +3,14 @@
 
     <el-header style="height:80px;text-align: right; font-size: 12px;padding:0px;overflow:hidden;">
     <el-menu :default-active="headindex" class="el-menu-demo" mode="horizontal" >
-    <img src="../assets/ZYPC.png" class="img">
+    <img src="static/assets/ZYPC.png" class="img">
      <el-menu-item index="1" class="head" @click.native="heads('1',xuehao,'homepage')"><strong>首页</strong></el-menu-item>
      <el-menu-item index="2" class="head" @click.native="heads('2',xuehao,'editor')"><strong>写周报</strong></el-menu-item>
      <el-menu-item index="3" class="head" @click.native="heads('3',xuehao,'draft')"><strong>草稿箱</strong></el-menu-item>
      <el-menu-item index="4" class="head" @click.native="heads('4',xuehao,'collection')"><strong>我的收藏</strong></el-menu-item>
      <el-menu-item index="5" class="head" @click.native="heads('5',xuehao,'update')"><strong>已上传周报</strong></el-menu-item> 
-     <img src="../assets/logo.png" class="headright">
-     <el-menu-item index="6" class="head headleft"><el-badge :is-dot='redicon' class="redicon"><img src="../assets/message.png" class="messageimg"></img></el-badge></el-menu-item>
+     <img src="static/assets/logo.png" class="headright">
+     <el-menu-item index="6" @click.native="message('6',xuehao,'update')" class="head headleft"><el-badge :is-dot='redicon' class="redicon"><img src="static/assets/message.png" class="messageimg"></img></el-badge></el-menu-item>
     
     </el-menu>
     </el-header>
@@ -36,7 +36,7 @@
 
     </el-aside>
      <el-main style="padding:0px;">
-      <router-view v-bind:msg='{xuehao,roots,childmsg}' v-on:child-say="ddd"></router-view>
+      <router-view v-bind:msg='{xuehao,roots,childmsg}' v-on:child-say="ddd"  v-on:homepage="homepage"></router-view>
      </el-main>
       </el-container>
     </el-container>
@@ -53,6 +53,7 @@
               childmsg:'',
               roots:'',    //权限
               asidemenu:true,   //控制左侧菜单隐藏显示
+              mess:true,     //控制左侧消息列表隐藏显示
               all:[         //所有分组数据
                   {
                       zuname:'开发组',
@@ -119,24 +120,38 @@
           this.childmsg=index;
           this.$router.push('peoplewrite');
       },
-      heads(index,msg,rou){
+      heads(index,xuehao,rou){
           this.headindex=index;
           this.asideindex='0';
-          this.childmsg=msg;
+          this.childmsg=xuehao;
           this.$router.push(rou);
       },
-      ddd(id,text,uid,headindex){
-          this.childmsg={'id':id,'text':text,'uid':uid};
+      ddd(id,text,uidd,headindex){
+          this.childmsg={'id':id,'text':text,'uid':uidd};
           if(headindex=='2')
           this.headindex=headindex;
+      },
+      message(index,xuehao,rou){
+          this.asidemenu=false;
+      },
+      homepage(xuehao){
+          this.childmsg=xuehao;
       }
     },
     mounted() {
         let _this=this;
         // _this.$http({
-        //     method:'post',
-        //     url:'',
-        // })
+        //         method:'post',
+        //         url:'',
+        //         data:{
+        //         }
+        //     })
+        //     .then(function(res){
+        //         //把所有数据放进data里
+        //     })
+        //     .catch(function(error){
+        //         console.log(error);
+        //     })
         this.$router.push('homepage');
     },
   }

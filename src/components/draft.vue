@@ -1,11 +1,11 @@
 <template>
 <div>
-<el-card class="box-card" v-for="(datas,index) in data" :key="datas.id" shadow="never" :body-style="{padding:'5px 30px 10px 30px' , border:'0px'}">
+<el-card class="box-card card" v-for="(datas,index) in data.data" :key="datas.id" shadow="never" :body-style="{padding:'5px 30px 10px 30px' , border:'0px'}">
   <div slot="header" class="clearfix">
-    <span>{{datas.createDate}}</span>
+    <span style="font-size:13px;"><strong>{{datas.createDate}}</strong></span>
     <el-button style="float: right; padding: 3px 0; color:#909399" type="text" @click="deletes(datas.id,index)">删除</el-button>
   </div>
-  <div class="texts item" @click="readtext(datas.content,datas.id,datas.uid)">
+  <div class="texts item" @click="readtext(datas.content,datas.id,datas.uId)">
     {{datas.txt}}
   </div>
 </el-card>
@@ -71,22 +71,24 @@ export default{
             })
         },
         readtext(text,id,uid){    //text为文章文本内容，id为文章id,uid为文章作者id
+        console.log(text,id,uid);
             this.$emit('child-say',id,text,uid,'2');
             this.$router.push('editor');
         } 
     },
     mounted() {
         let _this=this;
+        console.log("hj");
         _this.$http({
             method:'post',
-            //url:'article/getNoActicleList.action',
+            url:'/api/weekly/article/getNoActicleList.action?uId=04161111',
             data:{
-                'uid':this.childmsg,
+                
             }
         })
         .then(function(res){
-            this.data=res.data;
-            console.log(res.data);
+            _this.data=res.data;
+            console.log(_this.data.data);
         })
         .catch(function(error){
             console.log(error);

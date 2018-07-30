@@ -21,20 +21,21 @@ export default {
           txt:'',    //纯文本
           editor:'',    //编辑器对象
           draft:'',    //页面初始文本
-          id:'',     //本篇周报id
+          id:'0',     //本篇周报id
           uid:'',    //本篇周报作者学号
         }
       },
       methods: {
         upload(status){
+          console.log(this.uid);
           let _this=this;
           _this.$http({
-            url:'',
+            url:'api/weekly/article/addArticle.action',
             method:'post',
             data:{
               'content':_this.editor.txt.html(),
               'txt':_this.editor.txt.text(),
-              'uid':_this.msg.childmsg,
+              'uid':_this.uid,
               'status':status,
               'id':_this.id,
             }
@@ -48,13 +49,16 @@ export default {
         },
       },
       mounted() {
-        let _this=this;
        console.log(this.msg);
         var editor = new E('#div1', '#div2')
         this.editor=editor;
         editor.create();
-        this.id=this.msg.childmsg.id;
-        this.uid=this.msg.childmsg.uid;
+        if(this.msg.childmsg.id==null){
+          this.id='1';
+        }else{
+          this.id=this.msg.childmsg.id;
+        }
+        this.uid=this.msg.xuehao;
         this.draft=this.msg.childmsg.text;
         this.editor.txt.html(this.draft);
 

@@ -43,7 +43,7 @@ export default{
         }
     },
     methods:{
-        readtext(text,id,uid){
+        readtext(text,id,uid){       //text:被点击文章的html内容，id:被点击文章的id,uid被点击文章的作者
             this.$emit('child-say',id,text,uid,'1');
             // localStorage.setItem('weeklyid',id);
             // localStorage.setItem('weeklywen',text);
@@ -77,7 +77,7 @@ export default{
             method:'post',
             //url:'article/getNoActicleList.action',
             data:{
-                'uid':this.msg,
+                'uid':this.msg.childmsg,
             }
         })
         .then(function(res){
