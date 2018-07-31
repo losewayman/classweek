@@ -9,12 +9,14 @@ import collection from '../components/collection.vue'
 import peoplewrite from '../components/peoplewrite.vue'
 import weekly from '../components/weekly.vue'
 import notFound from '../components/notFound.vue'
-
+import guanliyuan from '../components/guanli.vue'
 Vue.use(Router)
+
 
 export default new Router({
     routes: [
-        { path: '/', redirect: '/main' },
+        //{ path: '/', redirect: '/main' },
+        { path: '/root', component: guanliyuan },
         {
             path: '/main',
             component: main,
@@ -25,8 +27,7 @@ export default new Router({
                 { name: 'update', path: '/update', component: update },
                 { name: 'draft', path: '/draft', component: draft },
                 { name: 'weekly', path: '/weekly', component: weekly },
-                { name: 'peoplewrite', path: '/peoplewrite', component: peoplewrite },
-
+                { name: 'peoplewrite', path: '/peoplewrite', component: peoplewrite }
             ]
         },
         { path: '*', component: notFound },
