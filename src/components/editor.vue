@@ -7,7 +7,7 @@
 
 <div id="div1" class="toolbar" >
     </div>
-    <div id="div2" class="text"></div>
+    <div id="div2" class="editortext"></div>
    </div>
 </template>
 <script>
@@ -23,6 +23,7 @@ export default {
           draft:'',    //页面初始文本
           id:'0',     //本篇周报id
           uid:'',    //本篇周报作者学号
+          leave:''   //离开页面状态判断
         }
       },
       methods: {
@@ -32,29 +33,62 @@ export default {
           _this.$http({
             url:'api/weekly/article/addArticle.action',
             method:'post',
-            data:{
+            params:{
               'content':_this.editor.txt.html(),
               'txt':_this.editor.txt.text(),
-              'uid':_this.uid,
+              'uId':_this.uid,
               'status':status,
               'id':_this.id,
             }
           })
           .then(function(res){
-            console.log(res);
+            if(res.data.status=='200'){
+               _this.id=res.data.data;  //把接收到的草稿id重新赋值给this.id
+               _this.leave=_this.editor.txt.text();
+               if(status=='1'){
+                 _this.$emit('child-say','','','','5');
+                 _this.$router.push('update');
+               }
+            }
+            else{
+              if(status=='1'){
+                var mm="上传失败！";
+              }
+              else if(status=='0'){
+                var mm="保存失败！";
+              }
+              _this.$notify({
+                message:mm,
+                offset: 50,
+                type:'error',
+                duration:1500,
+                position: 'bottom-right'
+              });
+            }  
           })
           .catch(function(error){
-            console.log(error);
+            if(status=='1'){
+                var mm="上传失败！";
+              }
+              else if(status=='0'){
+                var mm="保存失败！";
+              }
+              _this.$notify({
+                message:mm,
+                offset: 50,
+                type:'error',
+                duration:1500,
+                position: 'bottom-right'
+              });
           })
         },
       },
       mounted() {
-       console.log(this.msg);
         var editor = new E('#div1', '#div2')
         this.editor=editor;
         editor.create();
         if(this.msg.childmsg.id==null){
-          this.id='1';
+          this.id='0';
         }else{
           this.id=this.msg.childmsg.id;
         }
@@ -63,31 +97,35 @@ export default {
         this.editor.txt.html(this.draft);
 
       },
-       beforeRouteLeave (to, from, next) {
-         this.$confirm('您可以选择以下操作', '您的周报还未上传！', {
-          showClose:false,
-          closeOnClickModal:false,
-          confirmButtonText: '保存草稿并退出',
-          cancelButtonText: '直接离开',
-          type: 'warning'
-        }).then(() => {
-          this.upload('0');
+      beforeRouteLeave (to, from, next){
+        if(this.leave!=this.editor.txt.text()){
+            this.$confirm('您可以选择以下操作', '您的周报还未上传！', {
+              showClose:false,
+              closeOnClickModal:false,
+              confirmButtonText: '保存草稿并退出',
+              cancelButtonText: '直接离开',
+              type: 'warning'
+            }).then(() => {
+            this.upload('0');
+              next();
+            }).catch(() => {
+              next();  
+            });
+        }
+        else{
           next();
-        }).catch(() => {
-          next();  
-        });
-          
+        }
         
-       }
-    }
+      }
+}
 </script>
 <style>
 .toolbar{
   border-bottom:1px solid rgb(230, 230, 230);
   padding-bottom:5px;
 }
-.text{
-  height:490px;
+.editortext{
+  height:488px;
   border:1px solid #a1a1a1;
   margin:15px;
   z-index:1000 !important;
