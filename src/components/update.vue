@@ -11,12 +11,10 @@
 </el-card>
 </div>
 </template>
-
-
 <script>
 export default{
    props:['msg'],
-  data(){s
+  data(){
     return{
       data:''
     }     
@@ -24,7 +22,7 @@ export default{
    methods:{
       deletee(index){ 
         let _this=this; 
-        _this.$http({
+        _this.$http({           
           method:'post',
           url:'/api/weekly/user/deleteColl.action?uId=04161111',
           // data: {
@@ -32,13 +30,18 @@ export default{
           //   'id':uId
           // }
         })  
-      .then(function(res){
-         if(res.status == '200'){
-          this.data=res.data.data;
-          this.data.splice(index,1);
-          this.$message({
-          message: '删除成功!',
-          center:true      
+      .then(function(res){      
+         if(res.data.status == '200'){
+          _this.data.splice(index,1);
+          _this.$message({
+          message: res.data.msg,
+          center:true
+        })
+      }
+      if(res.data.status == '0'){
+         _this.$message({
+          message: res.data.msg,
+          center:true
         })
       }
     })
