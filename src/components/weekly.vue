@@ -2,9 +2,8 @@
 <div>
 <div style="border-bottom:1px solid rgb(230, 230, 230);margin-bottom:10px;padding:10px 15px;">
 <el-button  size='small' style="background-color:#f2f2f2;font-size:12px;border:1px solid #a1a1a1;color:black;" @click="back()">返回</el-button>
-<el-button v-show="delshow" size='small' style="margin:10px;background-color:#f2f2f2;font-size:12px;border:1px solid #a1a1a1;color:black;" @click="del()">删除</el-button>
 <el-button v-show="replyshow" size='small' style="margin:10px;background-color:#0945C4;font-size:12px;color:white" @click="reply()">回复</el-button>
-<el-button v-show="collectshow" size='small' style="background-color:#f2f2f2;font-size:12px;border:1px solid #a1a1a1;color:black;" @click="collect()">{{collecttext}}</el-button>
+<el-button v-show="collectshow" size='small' style="background-color:#f2f2f2;font-size:12px;border:1px solid #a1a1a1;color:black;" @click="bucollect()">{{collecttext}}</el-button>
 </div >
 
 
@@ -13,13 +12,11 @@
 <el-button size='small' style="margin-top:10px;background-color:#0945C4;font-size:12px;color:white" @click="send()">发送</el-button>
 </div>
 
-<el-card class="box-card" shadow="never" v-for="o in replyall" :key="o" :body-style="{padding:'0px'}">
+<el-card class="box-card" shadow="never" v-for="(o,index) in replyall" :key="index" :body-style="{padding:'0px'}">
   <div class="replytext replyitem">
     <strong>{{ o.name + ':'}}</strong>
   </div>
-  <div class="replytext replyitem">
-    {{ o.creatTime }}
-  </div>
+  <div class="replytext replyitem" v-text="time(o.createTime)"></div>
   <div class="replytext replyitem">
     {{ o.txt }}
   </div>
@@ -27,19 +24,9 @@
 
 
 <!--测试数据-->
-<el-card class="box-card" shadow="never" :body-style="{padding:'0px'}">
-  <div v-for="o in 4" :key="o" class="replytext replyitem">
-    {{'列表内容 ' + o }}
-  </div>
-</el-card>
-<el-card class="box-card" shadow="never" :body-style="{padding:'0px'}">
-  <div v-for="o in 4" :key="o" class="replytext replyitem">
-    {{'列表内容 ' + o }}
-  </div>
-</el-card>
 
 
-<div class="contents">{{text}}</div>
+<div class="contents" v-html="text"></div>
 </div>
 </template>
 <script>
@@ -52,73 +39,62 @@ export default{
             uid:'',     //本篇文章作者学号
             loginuid:'',   //登陆人学号 
             root:'',   //登陆人权限
+            collect:'',
+            power:'',  //被查看人的权限
             id:'',   //本篇文章id
             text:'',   //本篇文章内容
             delshow:false,    //控制删除按钮
             replyshow:false,     //控制回复按钮
             collectshow:false,      //控制收藏按钮
             collecttext:'收藏',    //收藏按钮显示
-            sendshow:true,     //控制发送框
+            sendshow:false,     //控制发送框
         }
     },
     methods:{
         back(){
             this.$router.go(-1);
         },
-        del(){
-            let _this =this;
-            _this.$http({
-                method:'post',
-                url:'',
-                data:{
-                    'id':this.id
-                }
-            })
-            .then(function(res){
-                this.$router.go(-1);
-            })
-            .catch(function(error){
-                console.log(error);
-            })
-        },
         reply(){
             let _this =this;
-            _this.$http({
-                method:'post',
-                url:'',
-                data:{
-                    'id':this.id,
-                    'uid':this.uid,
-                }
-            })
-            .then(function(res){
-                //根据返回结果设置收藏按钮初始状态
-            })
-            .catch(function(error){
-                console.log(error);
-            })
+            _this.sendshow=true;
         },
-        collect(){
+        time(ti){
+            return ti.substr(0,10);
+        },
+        bucollect(){
             let _this =this;
             if(_this.collecttext == '收藏'){                     //根据收藏按钮状态来判断请求取消收藏或添加收藏
-                var url = '';
+                var url = 'api/weekly/user/addColl.action';
             }else if(_this.collecttext == '已收藏'){
-                var url = '';
+                var url = 'api/weekly/user/deleteColl.action';
             }
-
             _this.$http({    //请求收藏接口
                 method:'post',
                 url:url,
-                data:{
-                    'id':this.id,
-                    'uid':this.uid,
+                params:{
+                    'id':_this.loginuid,
+                    'aId':_this.id,
                 }
             })
             .then(function(res){
                 if(_this.collecttext == '收藏'){                     //根据收藏按钮状态来判断请求取消收藏或添加收藏
-                    _this.collecttext == '已收藏';
+                    _this.collecttext ='已收藏';
+                    _this.$notify({
+                        message: '收藏成功！',
+                        offset: 50,
+                        type:'success',
+                        duration:2000,
+                    });
+                    _this.$emit('coll',res.data.data.collection.split(','));        //
                 }else if(_this.collecttext == '已收藏'){
-                    _this.collecttext == '收藏';
+                    _this.collecttext = '收藏';
+                    _this.$notify({
+                        message: '取消收藏成功！',
+                        offset: 50,
+                        type:'success',
+                        duration:2000,
+                    });
+                    _this.$emit('coll',res.data.data.collection.split(','));   //
                 }
             })
             .catch(function(error){
@@ -129,15 +105,27 @@ export default{
             let _this =this;
             _this.$http({
                 method:'post',
-                url:'',
-                data:{
-                    'id':this.id,
-                    'txt':this.replymsg,
-                    'uid':this.loginuid
+                url:'api/weekly/replyArticle/addReplyArticle.action',
+                params:{
+                    'aId':_this.id,
+                    'txt':_this.replymsg,
+                    'uId':_this.loginuid,
                 }
             })
             .then(function(res){
-                //把这条回复信息放到页面上，并清空回复框
+                var datetime = new Date();
+                var year=datetime.getFullYear();
+                var month=datetime.getMonth()+1;
+                if(month<=9){
+                    month="0"+month;
+                }
+                var date=datetime.getDate();
+                if(date<=9){
+                    date="0"+date;
+                }
+                var dateformat=year+"-"+month+"-"+date;
+                _this.replyall.unshift({'createTime':dateformat,'name':_this.msg.name,'txt':_this.replymsg});
+                _this.replymsg="";
             })
             .catch(function(error){
                 console.log(error);
@@ -145,56 +133,54 @@ export default{
         },
     },
     mounted() {
-        console.log(this.msg);
         this.root = this.msg.roots;
         this.loginuid = this.msg.xuehao;
+        this.collect=this.msg.collect;
+        this.power = this.msg.childmsg.power;
         this.uid = this.msg.childmsg.uid;
         this.id = this.msg.childmsg.id;
         this.text = this.msg.childmsg.text;
-        if(this.loginuid == this.uid){
-            this.delshow = true;
-        }else{
-            this.collectshow = true;
-        }
-        if(this.root == ''){
-            this.replysow = true;
-        }
         let _this =this;
-
-        if(_this.loginuid==_this.uid || _this.root==""){     //为本人或负责人时请求本文章上所有回复
-            let _this =this;
-            _this.$http({
+        if(_this.loginuid == _this.uid){
+            _this.collectshow = false;
+        }else{
+            _this.collectshow = true;
+            for(var index=0;index<_this.collect.length;index++){
+                if(_this.collect[index]==_this.id){
+                    console.log(_this.collect[index],_this.id);
+                    _this.collecttext="已收藏";
+                    break;
+                }
+            }
+        }
+        if(_this.root>0){
+            if(_this.power<0 && -_this.power==this.root){
+                _this.replyshow=true;
+            }
+            if(_this.power==_this.root){
+                _this.replyshow=true;
+            }  
+        }
+        if(_this.root<0){
+            if(_this.loginuid == _this.uid)
+            _this.replyshow=true;
+        }
+ 
+        if(_this.replyshow == true){
+           _this.$http({     //请求本篇文章上的所有回复
                 method:'post',
-                url:'',
-                data:{
-                    'id':_this.id
+                url:'api/weekly/reply/getreplyArticleListByaId.action',
+                params:{
+                    'aId':_this.id,
                 }
             })
             .then(function(res){
-                _this.replyall=res.data;
+                _this.replyall=res.data.data.reverse();
             })
             .catch(function(error){
-                console.log(error);
             })
         }
-        //查询收藏初始状态
-        _this.$http({
-                method:'post',
-                url:'',
-                data:{
-                    'id':_this.id,
-                    'uid':_this.uid
-                }
-            })
-            .then(function(res){
-                //根据查询结果来设置collecttext的初始状态
-            })
-            .catch(function(error){
-                console.log(error);
-            })
-
-            
-        
+              
     },
 }
 </script>
@@ -202,7 +188,7 @@ export default{
 <style scoped>
 .contents{
     width:cale(100% - 30px);
-    padding:15px;
+    padding:10px;
     padding-right:12px;
     height:500px;
     border:1px solid #a1a1a1;
@@ -221,10 +207,59 @@ export default{
     border:0px;
     margin:15px 10px;
 }
+
 </style>
+
+
 <style>
 .area textarea{
     height:100px;
 }
 
+.contents table {
+  border-top: 1px solid #ccc;
+  border-left: 1px solid #ccc;
+}
+.contents table td,
+table th {
+  border-bottom: 1px solid #ccc;
+  border-right: 1px solid #ccc;
+  padding: 3px 5px;
+}
+.contents table th {
+  border-bottom: 2px solid #ccc;
+  text-align: center;
+}
+
+/* blockquote 样式 */
+.contents blockquote {
+  display: block;
+  border-left: 8px solid #d0e5f2;
+  padding: 5px 10px;
+  margin: 10px 0;
+  line-height: 1.4;
+  font-size: 100%;
+  background-color: #f1f1f1;
+}
+
+/* code 样式 */
+.contents code {
+  display: inline-block;
+  *display: inline;
+  *zoom: 1;
+  background-color: #f1f1f1;
+  border-radius: 3px;
+  padding: 3px 5px;
+  margin: 0 3px;
+}
+.contents pre code {
+  display: block;
+}
+.contents h1,h2,h3,h4,h5,h6,p{
+    margin:10px 0px;
+}
+.contents ul, ol {
+    padding:0px;
+  margin: 10px 0 10px 20px;
+}
 </style>

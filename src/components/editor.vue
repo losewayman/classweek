@@ -49,6 +49,14 @@ export default {
                  _this.$emit('child-say','','','','5');
                  _this.$router.push('update');
                }
+               else if(status=='0'){
+                 _this.$notify({
+                  message:"保存成功！",
+                  offset: 50,
+                  type:'success',
+                  duration:2000,
+                });
+               }
             }
             else{
               if(status=='1'){
@@ -87,7 +95,7 @@ export default {
         var editor = new E('#div1', '#div2')
         this.editor=editor;
         editor.create();
-        if(this.msg.childmsg.id==null){
+        if(this.msg.childmsg.id==null ||this.msg.childmsg.id=='' ){
           this.id='0';
         }else{
           this.id=this.msg.childmsg.id;
@@ -125,7 +133,7 @@ export default {
   padding-bottom:5px;
 }
 .editortext{
-  height:488px;
+  height:485px;
   border:1px solid #a1a1a1;
   margin:15px;
   z-index:1000 !important;

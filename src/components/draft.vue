@@ -1,8 +1,8 @@
 <template>
 <div>
-<el-card class="box-card card" v-for="(datas,index) in data.data" :key="datas.id" shadow="never" :body-style="{padding:'5px 30px 10px 30px' , border:'0px'}">
+<el-card class="box-card card" v-for="(datas,index) in data" :key="datas.id" shadow="never" :body-style="{padding:'5px 30px 10px 30px' , border:'0px'}">
   <div slot="header" class="clearfix">
-    <span style="font-size:13px;"><strong>{{datas.createDate}}</strong></span>
+    <span style="font-size:13px;"><strong v-text="time(datas.createDate)"></strong></span>
     <el-button style="float: right; padding: 3px 0; color:#909399" type="text" @click="deletes(datas.id,index)">删除</el-button>
   </div>
   <div class="texts item" @click="readtext(datas.content,datas.id,datas.uId)">
@@ -35,27 +35,27 @@ export default{
                 }
             })
             .then(function(res){
-                //_this.data=res.data.data;
                 if(res.data.status=='200'){
-                    _this.data.data.splice(index,1);
+                    _this.data.splice(index,1);
                     _this.$notify({
                         message: '删除成功！',
                         offset: 50,
                         type:'success',
-                        duration:1500,
-                        //position: 'bottom-right'
+                        duration:2000,
                         });
                 }
             })
             .catch(function(error){
-                 _this.$notify({
-                        message: '删除失败！',
-                        offset: 50,
-                        type:'error',
-                        duration:1500,
-                        //position: 'bottom-right'
-                        });
+                _this.$notify({
+                    message: '删除失败！',
+                    offset: 50,
+                    type:'error',
+                    duration:2000,
+                });
             })
+        },
+        time(ti){
+            return ti.substr(0,10);
         },
         readtext(text,id,uid){    //text为文章文本内容，id为文章id,uid为文章作者id
             this.$emit('child-say',id,text,uid,'2');
@@ -67,16 +67,20 @@ export default{
         _this.$http({
             method:'post',
             url:'/api/weekly/article/getNoActicleList.action',
-
-            data:{
-                'uId':'04161111',
+            params:{
+                'uId':this.msg.xuehao,
             }
         })
         .then(function(res){
-            _this.data=res.data;
+            _this.data=res.data.data.reverse();
         })
         .catch(function(error){
-            console.log(error);
+            _this.$notify({
+                message: '信息加载失败！',
+                offset: 50,
+                type:'error',
+                duration:2000,
+            });
         })
     },
 }

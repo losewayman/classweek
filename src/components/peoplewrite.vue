@@ -1,36 +1,15 @@
 <template>
 <div>
-<el-card class="box-card" v-for="(datas,index) in data" :key="datas.id" shadow="never" :body-style="{padding:'5px 30px 10px 30px' , border:'0px'}">
+<el-card class="box-card card" v-for="(datas,index) in data" :key="datas.Id" shadow="never" :body-style="{padding:'5px 30px 10px 30px' , border:'0px'}">
   <div slot="header" class="clearfix">
-    <span>{{datas.createDate}}</span>
+    <span style="font-size:13px;"><strong  v-text="time(datas.createDate)"></strong></span>
   </div>
-  <div class="texts item" @click="readtext(datas.content,datas.id,datas.uid)">
+  <div class="texts item" @click="readtext(datas.content,datas.id,datas.uId,datas.power)">
     {{datas.txt}}
   </div>
 </el-card>
 
-
-
 <!--测试数据-->
-<el-card class="box-card card" shadow="never" :body-style="{padding:'5px 30px 10px 30px' , border:'0px'}">
-  <div slot="header" class="clearfix">
-    <span>卡片名称</span>
-  </div>
-  <div class="texts item" style="" @click="readtext('鬼魂俄日好卡好卡好卡好卡好卡好卡好卡好卡和',0)">
-    {{'鬼魂俄日好卡好卡好卡好卡好卡好卡好卡好卡和'}}
-  </div>
-</el-card>
-<el-card class="box-card card" shadow="never" :body-style="{padding:'5px 30px 10px 30px' , border:'0px'}">
-  <div slot="header" class="clearfix">
-    <span>卡片名称</span>
-  </div>
-  <div class="texts item" style="">
-    {{'鬼魂四好卡好卡好卡好卡好卡好卡好卡和'}}
-  </div>
-</el-card>
-
-
-
 
 </div>
 </template>
@@ -43,58 +22,61 @@ export default{
         }
     },
     methods:{
-        readtext(text,id,uid){       //text:被点击文章的html内容，id:被点击文章的id,uid被点击文章的作者
-            this.$emit('child-say',id,text,uid,'1');
-            // localStorage.setItem('weeklyid',id);
-            // localStorage.setItem('weeklywen',text);
+        readtext(text,id,uid,power){       //text:被点击文章的html内容，id:被点击文章的id,uid被点击文章的作者
+            this.$emit('child-say',id,text,uid,power,'1');
             this.$router.push('weekly');
+        },
+        time(ti){
+            return ti.substr(0,10);
         }
     },
     watch:{
         msg:function(){
-            console.log('个人列表',this.msg);
+            console.log(this.msg);
             let _this=this;
             _this.$http({    //获取被点击人的周报列表
                 method:'post',
-                //url:'article/getNoActicleList.action',
-                data:{
-                'uid':this.msg.childmsg,
+                url:'api/weekly/article/getArticleList.action',
+                params:{
+                'uId':this.msg.childmsg.uid,
                 }
             })
             .then(function(res){
-                this.data=res.data;
-                console.log(res.data);
+                _this.data=res.data.data.reverse();
+                console.log(res);
             })
             .catch(function(error){
                 console.log(error);
+                _this.$notify({
+                    message: '信息加载失败！',
+                    offset: 50,
+                    type:'error',
+                    duration:2000,
+                });
             })
         }
     },
     mounted() {
-        console.log('个人列表',this.msg);
         let _this=this;
         _this.$http({     //第一次获取被点击人的周报列表
             method:'post',
-            //url:'article/getNoActicleList.action',
-            data:{
-                'uid':this.msg.childmsg,
+            url:'api/weekly/article/getArticleList.action',
+            params:{
+                'uId':_this.msg.childmsg.uid,
             }
         })
         .then(function(res){
-            this.data=res.data;
-            console.log(res.data);
+            _this.data=res.data.data.reverse();
         })
         .catch(function(error){
             console.log(error);
+            _this.$notify({
+                message: '信息加载失败！',
+                offset: 50,
+                type:'error',
+                duration:2000,
+            });
         })
-        // _this.$http({
-        //     url:'/api/get/message?api=house',
-        //     method:'get',
-        // }).then(function (response) {
-        //     console.log('d',response);
-        // }).catch(function (error) {
-        //         console.log(error);
-        // })
     },
 }
 </script>
