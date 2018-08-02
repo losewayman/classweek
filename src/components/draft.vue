@@ -75,12 +75,6 @@ export default{
             _this.data=res.data.data.reverse();
         })
         .catch(function(error){
-            _this.$notify({
-                message: '信息加载失败！',
-                offset: 50,
-                type:'error',
-                duration:2000,
-            });
         })
     },
 }

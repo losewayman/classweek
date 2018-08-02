@@ -70,14 +70,10 @@ export default{
       })
     .then(function(res){
       _this.data = res.data.data.reverse();
+      if(_this.data.length==0){
+        }
     })
     .catch(function(error){
-      _this.$notify({
-        message: '信息加载失败！',
-        offset: 50,
-        type:'error',
-        duration:2000,
-      });
     })
     }
     

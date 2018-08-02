@@ -11,11 +11,8 @@
     {{da.txt}}
   </div>
 </el-card>
-
-<!-- 页面展示 -->
 </div>
 </template>
-
 <style scoped>
   .text-item {
     height:30px;
@@ -46,7 +43,6 @@
     border:0px;
 }
 </style>
-
 <script>
 export default{
   props:['msg'],
@@ -69,6 +65,7 @@ export default{
             .then(function(res){
                 if(res.data.status=='200'){
                     _this.data.splice(index,1);
+                    _this.msg.collect.reverse().splice(index,1).reverse();
                     _this.$notify({
                         message: '删除成功！',
                         offset: 50,
@@ -94,7 +91,6 @@ export default{
       this.$router.push('weekly');
     }
   },
-
     mounted(){
         let _this=this;
       this.$http({
@@ -105,28 +101,9 @@ export default{
         }
       })
     .then(function(res){
-      if(res.data.status==0){
-         _this.$notify({
-        message: res.data.msg,
-        offset: 50,
-        type:'error',
-        duration:2000,
-      });
-      }
-      else{
         _this.data = res.data.data.reverse();
-      }
-      
     })
-    // 请求失败时执行
     .catch(function(error){
-      console.log(error);
-      _this.$notify({
-        message: '信息加载失败！',
-        offset: 50,
-        type:'error',
-        duration:2000,
-      });
     })
     }
 

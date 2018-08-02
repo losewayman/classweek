@@ -16,9 +16,7 @@
     </el-header>
      <el-container>
 
-
     <el-aside  width="290px" style="background-color: rgb(238, 211, 246)">
-
 
     <el-row class="tac" v-show="asidemenu">
     <el-col :span="24">
@@ -34,33 +32,21 @@
     </el-menu>
     </el-col>
     </el-row>
-<!-- v-for="(o,index) in replymessage"    o.createDate -->
 
 <el-row class="tac" v-show="mess" >
   <el-col :span="24">
-    <el-menu default-active="2" class="el-menu-vertical-demo"  active-text-color="#000000">
-        <el-menu-item-group>
-
-
-          <el-menu-item index="1-1" style="height:auto;border-bottom:1px solid #e6e6e6;" @click.native="mainmess()">
-          <div  style="height:40px;">
-          <span>姓名</span>
-          <span class="button"  v-text="time('2018-07-27 16:52:57')"></span>
+    <el-menu default-active="0" class="el-menu-vertical-demo"  active-text-color="#000000">
+          <el-menu-item :index="index.toString()" style="height:auto;border-bottom:1px solid #e6e6e6" v-for="(da,index) in replymessage"  @click.native="read(da.article.content,da.article.id,da.article.uId,da.power)" :key="index">  <!--缺权限 -->
+          <div  style="height:40px;" >
+          <strong><span>{{da.name}}</span></strong>
+          <span class="button"  v-text="time(da.createTime)"></span>
           </div>
-          <div class="messag" style="height:40px;">dsdsd</div>
+          <div class="messag" style="height:40px;">{{da.txt}}</div>
           </el-menu-item>
-
-
-        </el-menu-item-group>
     </el-menu>
   </el-col>
 </el-row>
-
-
-
     </el-aside>
-
-
 
      <el-main style="padding:0px;">
       <router-view v-bind:msg='{category,name,xuehao,roots,collect,childmsg}' v-on:child-say="ddd"  v-on:homepage="homepage" v-on:coll="col"></router-view>
@@ -74,7 +60,7 @@
           return {
               headindex:'1',    //head的选中控制
               asideindex:'0',       //aside的选中控制
-              redicon:true,   //控制红点
+              redicon:false,   //控制红点
               name:'',    //名字
               xuehao:'',    //学号
               category:'',
@@ -96,6 +82,8 @@
           this.$router.push('peoplewrite');
       },
       heads(index,xuehao,rou){
+          this.asidemenu=true;
+          this.mess=false;
           this.headindex=index;
           this.asideindex='0';
           this.childmsg.id='';
@@ -107,6 +95,10 @@
       time(ti){
           return ti.substr(5,6)+ti.substr(11,5);
       },
+      read(text,id,uId,power){
+          this.childmsg={'id':id,'text':text,'uid':uId,'power':power};
+          this.$router.push('weekly');
+      },
       ddd(id,text,uidd,headindex,power){
           this.childmsg={'id':id,'text':text,'uid':uidd,'power':power};
           if(headindex=='2')
@@ -116,7 +108,6 @@
       },
       col(collection){
           this.collect=collection;
-          console.log(collection);
       },
       message(index,xuehao,rou){
           let _this=this;
@@ -128,10 +119,9 @@
               }
           })
           .then(function(res){
-              console.log(res);
+              _this.replymessage=res.data.data;
           })
           .catch(function(error){
-              console.log(error);
               _this.$notify({
                 message: '信息加载失败！',
                 offset: 50,
@@ -141,9 +131,7 @@
           })
           this.asidemenu=false;
           this.mess=true;
-      },
-      mainmess(){
-
+          this.redicon=false;
       },
       homepage(xuehao){
           this.childmsg.uid=xuehao;
@@ -170,26 +158,21 @@
                 else{
                     _this.collect=res.data.user.collection.split(",");
                 }
-
-
                 _this.$http({
-                    method:'post',   //请求所有回复
+                    method:'post',  
                     url:'api/weekly/reply/hasReply.action',
                     params:{
                         'uId':_this.xuehao,
                     }
                 })
                 .then(function(res){
-                    console.log(res);
                     if(res.data.status==0){
                         _this.redicon=false;
                     }else if(res.data.status==200){
-                        _this.redicon==true;
+                        _this.redicon=true;
                     }
-
                 })
                 .catch(function(error){
-                    console.log(error);
                     _this.$notify({
                         message: '消息加载失败！',
                         offset: 50,
@@ -197,12 +180,7 @@
                         duration:2000,
                     });
                 })
-
-
-
-
-                setTimeout(function(){_this.$router.push('homepage');},500);
-                
+                setTimeout(function(){_this.$router.push('homepage');},500);  
             })
             .catch(function(error){
                 _this.$notify({
@@ -212,9 +190,6 @@
                 duration:2000,
             });
         })
-        
-            
-        
     },
   }
 </script>

@@ -8,9 +8,6 @@
     {{datas.txt}}
   </div>
 </el-card>
-
-<!--测试数据-->
-
 </div>
 </template>
 <script>
@@ -69,13 +66,6 @@ export default{
             _this.data=res.data.data.reverse();
         })
         .catch(function(error){
-            console.log(error);
-            _this.$notify({
-                message: '信息加载失败！',
-                offset: 50,
-                type:'error',
-                duration:2000,
-            });
         })
     },
 }

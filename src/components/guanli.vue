@@ -1,23 +1,19 @@
 <template>
   <el-table :data="tableData" style="width: 100%">
-
     <el-table-column
       label="姓名"
       width="180">
       <template slot-scope="scope">
-        <span style="margin-left: 10px">{{ scope.row.date }}</span>
+        <span style="margin-left: 10px">{{ scope.row.name }}</span>
       </template>
     </el-table-column>
-
        <el-table-column
       label="分组"
       width="180">
       <template slot-scope="scope">
-        <span style="margin-left: 10px">{{ scope.row.date }}</span>
+        <span style="margin-left: 10px">{{ scope.row.category }}</span>
       </template>
     </el-table-column>
-
-
     <el-table-column
       label="分组"
       width="180">
@@ -32,150 +28,110 @@
   </el-select>
       </template>
     </el-table-column>
-
-
-
-
     <el-table-column label="操作">
       <template slot-scope="scope">
         <el-button
           size="mini"
-          @click="handleEdit(scope.$index, scope.row.id)">提交</el-button>
+          @click.native="handleEdit(rooter[scope.$index], scope.row.id)">提交</el-button>
         <el-button
           size="mini"
           type="danger"
-          @click="handleDelete(scope.row.id)">删除</el-button>
-        <el-button
-          size="mini"
-          type="danger"
-          @click="handleBack(scope.row.id)">恢复</el-button>  
+          @click.native="handleDelete(scope.$index,scope.row.id)">删除</el-button>
+        
       </template>
     </el-table-column>
   </el-table>
 </template>
-
 <script>
   export default {
     data() {
       return {
-        rooter:[-1,1,-1,1],
-        tableData: [{
-          date: '2016-05-02',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1518 弄'
-        }, {
-          date: '2016-05-04',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1517 弄'
-        }, {
-          date: '2016-05-01',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1519 弄'
-        }, {
-          date: '2016-05-03',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1516 弄'
-        }]
+        rooter:[],
+        tableData:[],
       }
     },
     methods: {
-      handleDelete(index) {
-        _this.$http({
-            url:'api/weekly/article/addArticle.action',
-            method:'post',
-            params:{
-
-            }
-          })
-          .then(function(res){
-            if(res.data.status=='200'){
-              
-            }
-          })
-          .catch(function(error){
-              _this.$notify({
-                message:"提交失败",
-                offset: 50,
-                type:'error',
-                duration:1500,
-                position: 'bottom-right'
-              });
-          })
-        console.log(this.group,this.rooter);
-      },
-      handleBack(){
-        _this.$http({
-            url:'api/weekly/article/addArticle.action',
-            method:'post',
-            params:{
-
-            }
-          })
-          .then(function(res){
-            if(res.data.status=='200'){
-              
-            }
-          })
-          .catch(function(error){
-              _this.$notify({
-                message:"提交失败",
-                offset: 50,
-                type:'error',
-                duration:1500,
-                position: 'bottom-right'
-              });
-          })
-      },
-
-      handleEdit(index, id) {
+      handleDelete(index,id) {
         let _this=this;
         _this.$http({
-            url:'api/weekly/article/addArticle.action',
+            url:'api/weekly/user/updateUserStatus.action',
             method:'post',
             params:{
-              'id':_this.id,
-              'power':_this.rooter[index],
+              "id":id,
             }
           })
           .then(function(res){
             if(res.data.status=='200'){
-              
+              _this.$notify({
+                message:"提交成功",
+                offset: 50,
+                type:'success',
+                duration:1500,
+              });
+              _this.tableData.splice(index,1);
             }
-
           })
           .catch(function(error){
-            
+              _this.$notify({
+                message:"提交失败",
+                offset: 50,
+                type:'error',
+                duration:1500,
+              });
+          })
+      },
+      handleEdit(power, id) {
+        let _this=this;
+        _this.$http({
+            url:'api/weekly/user/updatePower.action',
+            method:'post',
+            params:{
+              'id':id,
+              'power':power,
+            }
+          })
+          .then(function(res){
+            if(res.data.status=='200'){
+               _this.$notify({
+                message:"删除成功",
+                offset: 50,
+                type:'success',
+                duration:1500,
+              });
+            }
+          })
+          .catch(function(error){
               _this.$notify({
                 message:"删除失败",
                 offset: 50,
                 type:'error',
                 duration:1500,
-                position: 'bottom-right'
               });
           })
-        console.log(index, row);
       }
     },
    mounted() {
       let _this=this;
         _this.$http({
-            url:'api/weekly/article/addArticle.action',
+            url:'api/weekly/getUserList.action',
             method:'post',
             params:{
             }
           })
           .then(function(res){
             if(res.data.status=='200'){
-              _this.tableData=res.data;
+              _this.tableData=res.data.data;
+              for(let a=0;a<_this.tableData.length;a++){
+                _this.rooter.push(_this.tableData[a].power);
+              }
             }
           })
           .catch(function(error){
               _this.$notify({
-                message:"删除失败",
+                message:"信息加载失败",
                 offset: 50,
                 type:'error',
                 duration:1500,
-                position: 'bottom-right'
               });
           })
       }

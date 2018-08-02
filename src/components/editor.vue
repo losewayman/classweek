@@ -1,10 +1,9 @@
 <template>
 <div>
 <div style="border-bottom:1px solid rgb(230, 230, 230);margin-bottom:10px;">
-<el-button size='small' style="margin:10px;background-color:#0945C4;font-size:12px;color:white" @click="upload('1')">上传</el-button>
-<el-button size='small' style="margin:10px;background-color:#f2f2f2;font-size:12px;border:1px solid #a1a1a1;color:black;" class="draft" @click="upload('0')">保存草稿</el-button>
+<el-button size='small' style="margin:10px;background-color:#0945C4;font-size:12px;color:white" @click="upload('1')" :disabled="isDisable">上传</el-button>
+<el-button size='small' style="margin:10px;background-color:#f2f2f2;font-size:12px;border:1px solid #a1a1a1;color:black;" class="draft" @click="upload('0')"  :disabled="isDisable">保存草稿</el-button>
 </div>
-
 <div id="div1" class="toolbar" >
     </div>
     <div id="div2" class="editortext"></div>
@@ -17,6 +16,7 @@ export default {
       props:['msg'],
       data () {
         return {
+          isDisable: false,
           content:'',    //带样式文本
           txt:'',    //纯文本
           editor:'',    //编辑器对象
@@ -28,7 +28,10 @@ export default {
       },
       methods: {
         upload(status){
-          console.log(this.uid);
+          this.isDisable = true
+        setTimeout(() => {
+          this.isDisable = false
+        }, 1000);
           let _this=this;
           _this.$http({
             url:'api/weekly/article/addArticle.action',
@@ -103,7 +106,6 @@ export default {
         this.uid=this.msg.xuehao;
         this.draft=this.msg.childmsg.text;
         this.editor.txt.html(this.draft);
-
       },
       beforeRouteLeave (to, from, next){
         if(this.leave!=this.editor.txt.text()){
@@ -123,7 +125,6 @@ export default {
         else{
           next();
         }
-        
       }
 }
 </script>
@@ -137,6 +138,5 @@ export default {
   border:1px solid #a1a1a1;
   margin:15px;
   z-index:1000 !important;
-  
 }
 </style>
