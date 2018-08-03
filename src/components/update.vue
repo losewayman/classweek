@@ -42,7 +42,6 @@ export default{
                 }
             })
             .catch(function(error){
-              console.log(error);
                  _this.$notify({
                     message: '删除失败！',
                     offset: 50,

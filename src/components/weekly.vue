@@ -9,7 +9,7 @@
 
 <div style="padding:15px;" v-show="sendshow">
 <el-input type="textarea" class="area" v-model="replymsg"></el-input>
-<el-button size='small' style="margin-top:10px;background-color:#0945C4;font-size:12px;color:white" @click="send()">发送</el-button>
+<el-button size='small' style="margin-top:10px;background-color:#0945C4;font-size:12px;color:white" @click="send()" :disabled="issend">发送</el-button>
 </div>
 
 <el-card class="box-card" shadow="never" v-for="(o,index) in replyall" :key="index" :body-style="{padding:'0px'}">
@@ -35,6 +35,7 @@ export default{
     data(){
         return{
             isDisable:false,
+            issend:true,
             replymsg:'',     //回复内容  
             replyall:'',     //本篇文章上所有回复内容
             uid:'',     //本篇文章作者学号
@@ -85,7 +86,6 @@ export default{
             .then(function(res){
                 var sc=_this.collecttext;
                 if(sc == '收藏'){                     //根据收藏按钮状态来判断请求取消收藏或添加收藏
-                    console.log("bb");
                     _this.$notify({
                         message: '收藏成功！',
                         offset: 50,
@@ -96,7 +96,6 @@ export default{
                     _this.$emit('coll',res.data.data.collection.split(','));        //
                 }
                 if(sc == '已收藏'){
-                    console.log(res.data.data.collection);
                     _this.$notify({
                         message: '取消收藏成功！',
                         offset: 50,
@@ -108,7 +107,12 @@ export default{
                 }
             })
             .catch(function(error){
-                console.log(error);
+                _this.$notify({
+                        message: '发生未知错误！',
+                        offset: 50,
+                        type:'error',
+                        duration:2000,
+                });
             })
         },  
         send(){
@@ -138,12 +142,25 @@ export default{
                 _this.replymsg="";
             })
             .catch(function(error){
-                console.log(error);
+                 _this.$notify({
+                        message: '发送失败！',
+                        offset: 50,
+                        type:'error',
+                        duration:2000,
+                });
             })
         },
     },
     watch:{
-       msg:function(){
+        replymsg:function(){
+            let _this=this;
+            if(_this.replymsg==""){
+                _this.issend=true;
+            }else{
+                _this.issend=false;
+            }
+        },
+        msg:function(){
         this.power = this.msg.childmsg.power;
         this.uid = this.msg.childmsg.uid;
         this.id = this.msg.childmsg.id;

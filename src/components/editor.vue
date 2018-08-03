@@ -28,11 +28,19 @@ export default {
       },
       methods: {
         upload(status){
-          this.isDisable = true
-        setTimeout(() => {
-          this.isDisable = false
-        }, 1000);
           let _this=this;
+          this.isDisable = true
+          setTimeout(() => {
+            this.isDisable = false
+          }, 1000);
+          if(this.editor.txt.text()==''){
+          _this.$notify({
+                  message:"不能为空！",
+                  offset: 50,
+                  type:'error',
+                  duration:2000,
+                });
+        }else{
           _this.$http({
             url:'api/weekly/article/addArticle.action',
             method:'post',
@@ -92,6 +100,7 @@ export default {
                 position: 'bottom-right'
               });
           })
+        }
         },
       },
       mounted() {

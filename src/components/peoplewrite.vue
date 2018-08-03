@@ -29,7 +29,6 @@ export default{
     },
     watch:{
         msg:function(){
-            console.log(this.msg);
             let _this=this;
             _this.$http({    //获取被点击人的周报列表
                 method:'post',
@@ -40,10 +39,8 @@ export default{
             })
             .then(function(res){
                 _this.data=res.data.data.reverse();
-                console.log(res);
             })
             .catch(function(error){
-                console.log(error);
                 _this.$notify({
                     message: '信息加载失败！',
                     offset: 50,
