@@ -42,7 +42,7 @@ export default{
        let _this=this;
         _this.$http({
             method:'post',
-            url:'/api/weekly/user/getUserList.action',
+            url:'./user/getUserList.action',
             params:{
                 'id':_this.msg.xuehao,
                 'category':_this.msg.category,
@@ -72,7 +72,7 @@ export default{
     let _this=this;
         _this.$http({
             method:'post',
-            url:'/api/weekly/user/getUserList.action',
+            url:'./user/getUserList.action',
             params:{
                 'id':_this.msg.xuehao,
                 'category':_this.msg.category,

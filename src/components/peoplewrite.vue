@@ -1,6 +1,7 @@
 <template>
 <div>
-<el-card class="box-card card" v-for="(datas,index) in data" :key="datas.Id" shadow="never" :body-style="{padding:'5px 30px 10px 30px' , border:'0px'}">
+<img src="static/assets/bg.jpg" style="width:70%" v-if="imgb">
+<el-card class="box-card card" v-for="(datas,index) in data" :key="datas.Id" shadow="always" :body-style="{padding:'5px 30px 10px 30px' , border:'0px'}">
   <div slot="header" class="clearfix">
     <span style="font-size:13px;"><strong  v-text="time(datas.createDate)"></strong></span>
   </div>
@@ -16,6 +17,7 @@ export default{
     data(){
         return{
             data:'',    //接收到的此用户周报列表数据
+            imgb:false
         }
     },
     methods:{
@@ -32,12 +34,18 @@ export default{
             let _this=this;
             _this.$http({    //获取被点击人的周报列表
                 method:'post',
-                url:'api/weekly/article/getArticleList.action',
+                url:'./article/getArticleList.action',
                 params:{
                 'uId':this.msg.childmsg.uid,
                 }
             })
             .then(function(res){
+                if(res.data.data==''||res.data.data==null){
+                    _this.imgb=true;
+                }
+                else{
+                    _this.imgb=false;
+                }
                 _this.data=res.data.data.reverse();
             })
             .catch(function(error){
@@ -54,12 +62,18 @@ export default{
         let _this=this;
         _this.$http({     //第一次获取被点击人的周报列表
             method:'post',
-            url:'api/weekly/article/getArticleList.action',
+            url:'./article/getArticleList.action',
             params:{
                 'uId':_this.msg.childmsg.uid,
             }
         })
         .then(function(res){
+            if(res.data.data==''||res.data.data==null){
+                    _this.imgb=true;
+                }
+                else{
+                    _this.imgb=false;
+                }
             _this.data=res.data.data.reverse();
         })
         .catch(function(error){
@@ -95,14 +109,14 @@ export default{
     width: 800px;
   }
   .card{
-      border-width:0px 0px 1px 0px;
-      margin:0px 0px 0px 100px;
+      border-width:0px 0px 0px 0px;
+      margin:0px 0px 10px 100px;
   }
   
 </style>
 <style> 
 .el-card__header{
-    padding:10px 30px 0px 30px;
-    border:0px;
+    padding:10px 30px 0px 30px !important;
+    border:0px  !important;
 }
 </style>

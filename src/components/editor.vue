@@ -42,9 +42,9 @@ export default {
                 });
         }else{
           _this.$http({
-            url:'api/weekly/article/addArticle.action',
+            url:'./article/addArticle.action',
             method:'post',
-            params:{
+            data:{
               'content':_this.editor.txt.html(),
               'txt':_this.editor.txt.text(),
               'uId':_this.uid,
@@ -143,9 +143,8 @@ export default {
   padding-bottom:5px;
 }
 .editortext{
-  height:485px;
-  border:1px solid #a1a1a1;
-  margin:15px;
+  height:calc(100vh - 190px);
+  border:1px 1px 1px 0px solid #a1a1a1;
   z-index:1000 !important;
 }
 </style>

@@ -12,10 +12,10 @@ module.exports = {
         assetsPublicPath: '/',
         proxyTable: {
             '/api': { //使用"/api"来代替"http://f.apiplus.c" 
-                target: 'http://118.126.117.138:8080', //源地址 
+                target: 'http://localhost:8080/weekly/', //源地址 
                 changeOrigin: true, //改变源 
                 pathRewrite: {
-                    '^/api': 'http://118.126.117.138:8080' //路径重写 
+                    '^/api': 'http://localhost:8080/weekly/' //路径重写 
                 }
             }
         },
@@ -46,18 +46,18 @@ module.exports = {
 
     build: {
         // Template for index.html
-        index: path.resolve(__dirname, '../dist/index.html'),
+        index: path.resolve(__dirname, '../dist/weekly/index.html'),
 
         // Paths
-        assetsRoot: path.resolve(__dirname, '../dist'),
+        assetsRoot: path.resolve(__dirname, '../dist/weekly'),
         assetsSubDirectory: 'static',
-        assetsPublicPath: '/',
+        assetsPublicPath: '/weekly/',
 
         /**
          * Source Maps
          */
 
-        productionSourceMap: true,
+        productionSourceMap: false,
         // https://webpack.js.org/configuration/devtool/#production
         devtool: '#source-map',
 

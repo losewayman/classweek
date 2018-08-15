@@ -55,6 +55,7 @@ export default{
     methods:{
         back(){
             this.$router.go(-1);
+            this.$emit('side','1','0');
         },
         reply(){
             let _this =this;
@@ -70,10 +71,10 @@ export default{
         }, 1000);
             let _this =this;
             if(_this.collecttext == '收藏'){                     //根据收藏按钮状态来判断请求取消收藏或添加收藏
-                var url = 'api/weekly/user/addColl.action';
+                var url = './user/addColl.action';
             }
             if(_this.collecttext == '已收藏'){
-                var url = 'api/weekly/user/deleteColl.action';
+                var url = './user/deleteColl.action';
             }
             _this.$http({    //请求收藏接口
                 method:'post',
@@ -93,7 +94,14 @@ export default{
                         duration:2000,
                     });
                     _this.collecttext ='已收藏';
-                    _this.$emit('coll',res.data.data.collection.split(','));        //
+                    var obj=res.data.data.collection;
+                    if(obj==null || obj==''){
+                        obj=[];
+                    }
+                    else{
+                        obj=obj.split(',');
+                    }
+                    _this.$emit('coll',obj);        //
                 }
                 if(sc == '已收藏'){
                     _this.$notify({
@@ -103,7 +111,14 @@ export default{
                         duration:2000,
                     });
                     _this.collecttext ='收藏';
-                    _this.$emit('coll',res.data.data.collection.split(','));   //
+                    var obj=res.data.data.collection;
+                    if(obj==null || obj==''){
+                        obj=[];
+                    }
+                    else{
+                        obj=obj.split(',');
+                    }
+                    _this.$emit('coll',obj);    //
                 }
             })
             .catch(function(error){
@@ -119,7 +134,7 @@ export default{
             let _this =this;
             _this.$http({
                 method:'post',
-                url:'api/weekly/replyArticle/addReplyArticle.action',
+                url:'./replyArticle/addReplyArticle.action',
                 params:{
                     'aId':_this.id,
                     'txt':_this.replymsg,
@@ -195,13 +210,13 @@ export default{
         if(_this.replyshow == true){
            _this.$http({     //请求本篇文章上的所有回复
                 method:'post',
-                url:'api/weekly/reply/getreplyArticleListByaId.action',
+                url:'./reply/getreplyArticleListByaId.action',
                 params:{
                     'aId':_this.id,
                 }
             })
             .then(function(res){
-                _this.replyall=res.data.data;
+                _this.replyall=res.data.data.reverse();
             })
             .catch(function(error){
             })
@@ -224,7 +239,6 @@ export default{
             for(var index=0;index<_this.collect.length;index++){
                 if(_this.collect[index]==_this.id){
                     _this.collecttext="已收藏";
-                    break;
                 }
             }
         }
@@ -244,13 +258,13 @@ export default{
         if(_this.replyshow == true){
            _this.$http({     //请求本篇文章上的所有回复
                 method:'post',
-                url:'api/weekly/reply/getreplyArticleListByaId.action',
+                url:'./reply/getreplyArticleListByaId.action',
                 params:{
                     'aId':_this.id,
                 }
             })
             .then(function(res){
-                _this.replyall=res.data.data;
+                _this.replyall=res.data.data.reverse();
             })
             .catch(function(error){
             })
@@ -265,7 +279,7 @@ export default{
     width:cale(100% - 30px);
     padding:10px;
     padding-right:12px;
-    height:500px;
+    min-height:500px;
     border:1px solid #a1a1a1;
     margin:15px;
     overflow-y:auto;

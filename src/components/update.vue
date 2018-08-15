@@ -1,6 +1,7 @@
 <template>
 <div>
-<el-card class="box-card" v-for="(datas,index) in data" :key="datas.id" shadow="never" :body-style="{padding:'5px 30px 10px 30px' , border:'0px'}">
+<img src="static/assets/bg.jpg" style="width:70%" v-if="imgb">
+<el-card class="box-card" v-for="(datas,index) in data" :key="datas.id" shadow="always" :body-style="{padding:'5px 30px 10px 30px' , border:'0px'}">
   <div slot="header" class="clearfix">
     <span style="font-size:13px"><strong v-text="time(datas.createDate)"></strong></span>
     <el-button style="float: right; padding: 3px 0; color:#909399; border:0" type="text" :plain="true" v-on:click="deletee(datas.id,index)">删除</el-button>
@@ -18,6 +19,7 @@ export default{
   data(){
     return{
       data:'',
+      imgb:false,
     }     
   },
    methods:{
@@ -25,7 +27,7 @@ export default{
             let _this=this;
             _this.$http({
                 method:'post',
-                url:'api/weekly/article/deleteArticle.action',
+                url:'./article/deleteArticle.action',
                 params:{
                     'id':id,
                 }
@@ -62,12 +64,18 @@ export default{
       let _this=this;
       _this.$http({
         method:'post',
-        url:'/api/weekly/article/getArticleList.action',
+        url:'./article/getArticleList.action',
         params:{
             'uId':this.msg.xuehao,
         }
       })
     .then(function(res){
+      if(res.data.data==''||res.data.data==null){
+                    _this.imgb=true;
+                }
+                else{
+                    _this.imgb=false;
+                }
       _this.data = res.data.data.reverse();
       if(_this.data.length==0){
         }
@@ -92,8 +100,8 @@ export default{
   }
   .box-card{
       width:800px;
-      border-width:0px 0px 1px 0px;
-      margin:0px 0px 0px 100px;
+      border-width:0px 0px 0px 0px;
+      margin:0px 0px 10px 100px;
   }
   .clearfix:before,
   .clearfix:after {
@@ -106,8 +114,8 @@ export default{
 </style>
 <style>
 .el-card__header{
-    padding:10px 30px 0px 30px;
-    border:0px;
+    padding:10px 30px 0px 30px !important;
+    border:0px !important;
 }
 </style>
 

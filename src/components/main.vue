@@ -1,7 +1,7 @@
 <template>
-<el-container style="height: 95vh; border: 1px solid #eee;">
+<el-container style="height: 100vh; border: 1px solid #eee;">
 
-    <el-header style="height:80px;text-align: right; font-size: 12px;padding:0px;overflow:hidden;">
+    <el-header style="height:80px;text-align: right; font-size: 12px;padding:0px;overflow:hidden;box-shadow:0px 3px 8px #dcdcdc;z-index:1001">
     <el-menu :default-active="headindex" class="el-menu-demo" mode="horizontal" >
     <img src="static/assets/ZYPC.png" class="img">
      <el-menu-item index="1" class="head" @click.native="heads('1',xuehao,'homepage')"><strong>首页</strong></el-menu-item>
@@ -11,13 +11,10 @@
      <el-menu-item index="5" class="head" @click.native="heads('5',xuehao,'update')"><strong>已上传周报</strong></el-menu-item> 
      <img :src="img" class="headright">
      <el-menu-item index="6" @click.native="message('6',xuehao,'update')" class="head headleft"><el-badge :is-dot='redicon' class="redicon"><img src="static/assets/message.png" class="messageimg"></img></el-badge></el-menu-item>
-    
     </el-menu>
     </el-header>
-     <el-container>
-
-    <el-aside  width="290px" style="background-color: rgb(238, 211, 246)">
-
+    <el-container style="height:calc(100vh - 80px)">
+    <el-aside  width="290px" style="background-color: rgb(255, 255, 255);border-right:1px solid #e6e6e6">
     <el-row class="tac" v-show="asidemenu">
     <el-col :span="24">
     <el-menu :default-active="asideindex" class="el-menu-vertical-demo" active-text-color="#000000">  
@@ -39,7 +36,7 @@
           <el-menu-item :index="index.toString()" style="height:auto;border-bottom:1px solid #e6e6e6" v-for="(da,index) in replymessage"  @click.native="read(da.article.content,da.article.id,da.article.uId,da.power)" :key="index">  <!--缺权限 -->
           <div  style="height:40px;" >
           <strong><span>{{da.name}}</span></strong>
-          <span class="button"  v-text="time(da.createTime)"></span>
+          <span class="timebutton"  v-text="time(da.createTime)"></span>
           </div>
           <div class="messag" style="height:40px;">{{da.txt}}</div>
           </el-menu-item>
@@ -48,8 +45,8 @@
 </el-row>
     </el-aside>
 
-     <el-main style="padding:0px;">
-      <router-view v-bind:msg='{category,name,xuehao,roots,collect,childmsg}' v-on:child-say="ddd"  v-on:homepage="homepage" v-on:coll="col"></router-view>
+     <el-main style="padding:10px 0px 0px 0px;">
+      <router-view v-bind:msg='{category,name,xuehao,roots,collect,childmsg}' v-on:child-say="ddd"  v-on:homepage="homepage" v-on:coll="col" v-on:side="side"></router-view>
      </el-main>
       </el-container>
     </el-container>
@@ -62,7 +59,7 @@
               asideindex:'0',       //aside的选中控制
               redicon:false,   //控制红点
               name:'',    //名字
-              xuehao:'',    //学号
+              xuehao:'04163074',    //学号
               category:'',
               img:'',
               childmsg:{'id':'','text':'','uid':'','power':''},
@@ -109,17 +106,39 @@
       col(collection){
           this.collect=collection;
       },
+      side(a,b){
+          this.asidemenu=true;
+          this.mess=false;
+      },
       message(index,xuehao,rou){
           let _this=this;
           _this.$http({
               method:'post',   //请求所有回复
-              url:'api/weekly/reply/getreplyArticleList.action',
+              url:'./reply/getreplyArticleList.action',
               params:{
                   'uId':_this.xuehao,
               }
           })
           .then(function(res){
-              _this.replymessage=res.data.data;
+            if(res.data.data==''){
+                _this.$notify({
+                    message: '您目前还没有消息！',
+                    offset: 50,
+                    duration:2000,
+                });
+            }else{
+                var arr=res.data.data;
+                var hash = {};
+                arr = arr.reduce(function(item, next) {
+                hash[next.aId] ? '' : hash[next.aId] = true && item.push(next);
+                return item
+                }, [])
+                _this.replymessage = arr;
+                _this.childmsg={'id':_this.replymessage[0].article.id,'text':_this.replymessage[0].article.content,'uid':_this.replymessage[0].article.uId,'power':_this.replymessage[0].power};
+                _this.$router.push('weekly');
+                _this.asidemenu=false;
+                _this.mess=true;
+            }
           })
           .catch(function(error){
               _this.$notify({
@@ -129,8 +148,7 @@
                 duration:2000,
             });
           })
-          this.asidemenu=false;
-          this.mess=true;
+          
           this.redicon=false;
       },
       homepage(xuehao){
@@ -141,7 +159,7 @@
         let _this=this;
         _this.$http({
                 method:'post',
-                url:'api/weekly/user/login.action',
+                url:'./user/login.action',
                 params:{
                 }
             })
@@ -160,7 +178,7 @@
                 }
                 _this.$http({
                     method:'post',  
-                    url:'api/weekly/reply/hasReply.action',
+                    url:'./reply/hasReply.action',
                     params:{
                         'uId':_this.xuehao,
                     }
@@ -194,6 +212,9 @@
   }
 </script>
 <style>
+.el-menu{
+    border-right: 0px solid #e6e6e6 !important;
+}
 .el-menu-demo .is-active{
     color:#0945c4 !important;
     border-bottom-color:#0945c4 !important;
@@ -267,14 +288,13 @@
     text-overflow:ellipsis;
     overflow:hidden;
 }
-.button{
-    float: right; 
+.timebutton{
     height:40px;
     color:black;
     font-size:13px;
-    position:relative;
-    top:27px;
-    right:0px;
+    position:absolute;
+    top:30px;
+    right:18px;
 
 }
 </style>

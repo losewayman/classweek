@@ -1,6 +1,7 @@
 <template>
 <div>
-<el-card class="box-card" v-for="(da,index) in data" :key="da.id" shadow="never" :body-style="{padding:'5px 30px 10px 30px' , border:'0px'}">
+<img src="static/assets/bg.jpg" style="width:70%" v-if="imgb">
+<el-card class="box-card" v-for="(da,index) in data" :key="da.id" shadow="always" :body-style="{padding:'5px 30px 10px 30px' , border:'0px'}">
   <div slot="header" class="clearfix">
      <strong><span  style="font-size:14px">{{da.user.category+" - "}}</span>
      <span  style="font-size:14px">{{da.user.name}}</span></strong>
@@ -25,8 +26,8 @@
   }
   .box-card{
       width:800px;
-      border-width:0px 0px 1px 0px;
-      margin:0px 0px 0px 100px;
+      border-width:0px 0px 0px 0px;
+      margin:0px 0px 10px 100px;
   }
   .clearfix:before,
   .clearfix:after {
@@ -39,8 +40,8 @@
 </style>
 <style>
 .el-card__header{
-    padding:10px 30px 0px 30px;
-    border:0px;
+    padding:10px 30px 0px 30px !important;
+    border:0px !important;
 }
 </style>
 <script>
@@ -49,6 +50,7 @@ export default{
   data(){
     return{
       data:'',
+      imgb:false,
     }     
   },
      methods:{
@@ -56,7 +58,7 @@ export default{
             let _this=this;
             _this.$http({
                 method:'post',
-                url:'api/weekly/user/deleteColl.action',
+                url:'./user/deleteColl.action',
                 params:{
                     'aId':aid,
                     'id':this.msg.xuehao,
@@ -95,12 +97,18 @@ export default{
         let _this=this;
       this.$http({
         method:'post',
-        url:'/api/weekly/article/getActicleListByUserId.action',
+        url:'./article/getActicleListByUserId.action',
         params: {
           'uId':_this.msg.xuehao,
         }
       })
     .then(function(res){
+      if(res.data.data==''||res.data.data==null){
+                    _this.imgb=true;
+                }
+                else{
+                    _this.imgb=false;
+                }
         _this.data = res.data.data.reverse();
     })
     .catch(function(error){

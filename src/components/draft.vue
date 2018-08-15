@@ -1,6 +1,7 @@
 <template>
 <div>
-<el-card class="box-card card" v-for="(datas,index) in data" :key="datas.id" shadow="never" :body-style="{padding:'5px 30px 10px 30px' , border:'0px'}">
+<img src="static/assets/bg.jpg" style="width:70%" v-if="imgb">
+<el-card class="box-card card" v-for="(datas,index) in data" :key="datas.id" shadow="always" :body-style="{padding:'5px 30px 10px 30px' , border:'0px'}">
   <div slot="header" class="clearfix">
     <span style="font-size:13px;"><strong v-text="time(datas.createDate)"></strong></span>
     <el-button style="float: right; padding: 3px 0; color:#909399" type="text" @click="deletes(datas.id,index)">删除</el-button>
@@ -22,6 +23,7 @@ export default{
     data(){
         return{
             data:'',    //登陆用户的草稿数据
+            imgb:false,
         }
     },
     methods:{
@@ -29,7 +31,7 @@ export default{
             let _this=this;
             _this.$http({
                 method:'post',
-                url:'api/weekly/article/deleteActicle.action',
+                url:'./article/deleteActicle.action',
                 params:{
                     'id':id,
                 }
@@ -66,12 +68,18 @@ export default{
         let _this=this;
         _this.$http({
             method:'post',
-            url:'/api/weekly/article/getNoActicleList.action',
+            url:'./article/getNoActicleList.action',
             params:{
                 'uId':this.msg.xuehao,
             }
         })
         .then(function(res){
+           if(res.data.data==''||res.data.data==null){
+                    _this.imgb=true;
+                }
+                else{
+                    _this.imgb=false;
+                }
             _this.data=res.data.data.reverse();
         })
         .catch(function(error){
@@ -93,8 +101,8 @@ export default{
     overflow:hidden;
   }
   .card{
-      border-width:0px 0px 1px 0px !important;
-      margin:0px 0px 0px 100px!important;
+      border-width:0px 0px 0px 0px !important;
+      margin:0px 0px 10px 100px!important;
   }
 
   .clearfix:before,
@@ -112,7 +120,7 @@ export default{
 </style>
 <style>
 .el-card__header{
-    padding:10px 30px 0px 30px;
-    border:0px;
+    padding:10px 30px 0px 30px !important;
+    border:0px !important;
 }
 </style>

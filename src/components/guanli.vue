@@ -54,7 +54,7 @@
       handleDelete(index,id) {
         let _this=this;
         _this.$http({
-            url:'api/weekly/user/updateUserStatus.action',
+            url:'./user/updateUserStatus.action',
             method:'post',
             params:{
               "id":id,
@@ -63,41 +63,12 @@
           .then(function(res){
             if(res.data.status=='200'){
               _this.$notify({
-                message:"提交成功",
-                offset: 50,
-                type:'success',
-                duration:1500,
-              });
-              _this.tableData.splice(index,1);
-            }
-          })
-          .catch(function(error){
-              _this.$notify({
-                message:"提交失败",
-                offset: 50,
-                type:'error',
-                duration:1500,
-              });
-          })
-      },
-      handleEdit(power, id) {
-        let _this=this;
-        _this.$http({
-            url:'api/weekly/user/updatePower.action',
-            method:'post',
-            params:{
-              'id':id,
-              'power':power,
-            }
-          })
-          .then(function(res){
-            if(res.data.status=='200'){
-               _this.$notify({
                 message:"删除成功",
                 offset: 50,
                 type:'success',
                 duration:1500,
               });
+              _this.tableData.splice(index,1);
             }
           })
           .catch(function(error){
@@ -108,12 +79,41 @@
                 duration:1500,
               });
           })
+      },
+      handleEdit(power, id) {
+        let _this=this;
+        _this.$http({
+            url:'./user/updatePower.action',
+            method:'post',
+            params:{
+              'id':id,
+              'power':power,
+            }
+          })
+          .then(function(res){
+            if(res.data.status=='200'){
+               _this.$notify({
+                message:"提交成功",
+                offset: 50,
+                type:'success',
+                duration:1500,
+              });
+            }
+          })
+          .catch(function(error){
+              _this.$notify({
+                message:"提交失败",
+                offset: 50,
+                type:'error',
+                duration:1500,
+              });
+          })
       }
     },
    mounted() {
       let _this=this;
         _this.$http({
-            url:'api/weekly/getUserList.action',
+            url:'./getUserList.action',
             method:'post',
             params:{
             }
