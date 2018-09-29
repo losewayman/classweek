@@ -279,7 +279,7 @@ export default{
     width:cale(100% - 30px);
     padding:10px;
     padding-right:12px;
-    min-height:500px;
+    min-height:calc(100vh - 225px);
     border:1px solid #a1a1a1;
     margin:15px;
     overflow-y:auto;

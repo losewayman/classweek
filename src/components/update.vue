@@ -1,6 +1,6 @@
 <template>
 <div>
-<img src="static/assets/bg.jpg" style="width:70%" v-if="imgb">
+<img src="static/assets/bg.jpg" style="width:65%" v-if="imgb">
 <el-card class="box-card" v-for="(datas,index) in data" :key="datas.id" shadow="always" :body-style="{padding:'5px 30px 10px 30px' , border:'0px'}">
   <div slot="header" class="clearfix">
     <span style="font-size:13px"><strong v-text="time(datas.createDate)"></strong></span>

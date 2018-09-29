@@ -29,30 +29,43 @@ export default {
       methods: {
         upload(status){
           let _this=this;
-          this.isDisable = true
-          setTimeout(() => {
-            this.isDisable = false
-          }, 1000);
-          if(this.editor.txt.text()==''){
-          _this.$notify({
+          var d=new Date();
+          var weekday=d.getDay();
+          var day = d.getHours();
+          if(weekday<6&&weekday>=0&&status==='1'){
+            if(weekday===0&&day<12){
+              }
+            _this.$notify({
+              message:'请于周六到周日12点之间上传',
+              offset: 50,
+              type:'warning',
+              duration:1500,
+            }); 
+          }else{
+           this.isDisable = true
+              setTimeout(() => {
+                this.isDisable = false
+              }, 1000);
+              if(this.editor.txt.text()==''){
+              _this.$notify({
                   message:"不能为空！",
                   offset: 50,
                   type:'error',
                   duration:2000,
                 });
-        }else{
-          _this.$http({
-            url:'./article/addArticle.action',
-            method:'post',
-            data:{
-              'content':_this.editor.txt.html(),
-              'txt':_this.editor.txt.text(),
-              'uId':_this.uid,
-              'status':status,
-              'id':_this.id,
-            }
-          })
-          .then(function(res){
+              }else{
+              _this.$http({
+                  url:'./article/addArticle.action',
+                method:'post',
+                data:{
+                'content':_this.editor.txt.html(),
+                'txt':_this.editor.txt.text(),
+                'uId':_this.uid,
+                'status':status,
+                'id':_this.id,
+              }
+             })
+            .then(function(res){
             if(res.data.status=='200'){
                _this.id=res.data.data;  //把接收到的草稿id重新赋值给this.id
                _this.leave=_this.editor.txt.text();
@@ -101,6 +114,8 @@ export default {
               });
           })
         }
+          }
+          
         },
       },
       mounted() {

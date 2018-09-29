@@ -1,6 +1,6 @@
 <template>
 <div>
-<img src="static/assets/bg.jpg" style="width:70%" v-if="imgb">
+<img src="static/assets/bg.jpg" style="width:65%" v-if="imgb">
 <el-card class="box-card" v-for="(da,index) in data" :key="da.id" shadow="always" :body-style="{padding:'5px 30px 10px 30px' , border:'0px'}">
   <div slot="header" class="clearfix">
      <strong><span  style="font-size:14px">{{da.user.category+" - "}}</span>

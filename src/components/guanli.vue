@@ -1,5 +1,10 @@
-<template>
-  <el-table :data="tableData" style="width: 100%">
+<template> 
+<div>
+<div id="log" v-show="log">
+<el-input v-model="input" type="password" placeholder="请输入密码"></el-input>
+<button id="butt" @click="is()">登  录</button>
+</div>
+  <el-table :data="tableData" style="width: 100%" v-show="islog">
     <el-table-column
       label="姓名"
       width="180">
@@ -41,6 +46,7 @@
       </template>
     </el-table-column>
   </el-table>
+  </div>
 </template>
 <script>
   export default {
@@ -48,9 +54,27 @@
       return {
         rooter:[],
         tableData:[],
+        password:'zypcgzs',
+        input:'',
+        log:true,
+        islog:false
       }
     },
     methods: {
+      is(){
+        if(this.input===this.password){
+          this.log=false;
+          this.islog=true;
+        }
+        else{
+          this.$notify({
+                message:"密码错误",
+                offset: 50,
+                type:'error',
+                duration:1500,
+              });
+        }
+      },
       handleDelete(index,id) {
         let _this=this;
         _this.$http({
@@ -137,3 +161,21 @@
       }
   }
 </script>
+<style>
+#log{
+  width:250px;
+  height:110px;
+  margin:100px auto;
+  padding:20px;
+  background-color:	#E0FFFF;
+  border:1px solid #7bbfea;
+}
+#butt{
+  width:100%;
+  height:35px;
+  margin-top:30px;
+  background-color:#33a3dc;
+  border-width:0px;
+  border-radius:3px;
+}
+</style>
