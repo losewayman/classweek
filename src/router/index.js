@@ -10,13 +10,26 @@ import peoplewrite from '../components/peoplewrite.vue'
 import weekly from '../components/weekly.vue'
 import notFound from '../components/notFound.vue'
 import guanliyuan from '../components/guanli.vue'
+import login from '../components/login.vue'
+import message from '../components/message.vue'
+import week from '../components/week.vue'
+import people from '../components/people.vue'
+import send from '../components/send.vue'
 Vue.use(Router)
 
 
 export default new Router({
     routes: [
         { path: '/', redirect: '/main' },
-        { path: '/root', component: guanliyuan },
+        { path: '/login', component:login  },
+        { path: '/rooter',
+         component:guanliyuan,
+         children: [
+            { name: 'week', path: '/week', component: week },
+            { name: 'send', path: '/send', component: send },
+            { name: 'people', path: '/people', component: people },
+        ]
+        },
         {
             path: '/main',
             component: main,
@@ -26,6 +39,7 @@ export default new Router({
                 { name: 'collection', path: '/collection', component: collection },
                 { name: 'update', path: '/update', component: update },
                 { name: 'draft', path: '/draft', component: draft },
+                { name: 'message', path: '/message', component: message },
                 { name: 'weekly', path: '/weekly', component: weekly },
                 { name: 'peoplewrite', path: '/peoplewrite', component: peoplewrite }
             ]

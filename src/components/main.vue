@@ -3,211 +3,86 @@
 
     <el-header style="height:80px;text-align: right; font-size: 12px;padding:0px;overflow:hidden;box-shadow:0px 3px 8px #dcdcdc;z-index:1001">
     <el-menu :default-active="headindex" class="el-menu-demo" mode="horizontal" >
-    <img src="static/assets/ZYPC.png" class="img">
-     <el-menu-item index="1" class="head" @click.native="heads('1',xuehao,'homepage')"><strong>首页</strong></el-menu-item>
-     <el-menu-item index="2" class="head" @click.native="heads('2',xuehao,'editor')"><strong>写周报</strong></el-menu-item>
-     <el-menu-item index="3" class="head" @click.native="heads('3',xuehao,'draft')"><strong>草稿箱</strong></el-menu-item>
-     <el-menu-item index="4" class="head" @click.native="heads('4',xuehao,'collection')"><strong>我的收藏</strong></el-menu-item>
-     <el-menu-item index="5" class="head" @click.native="heads('5',xuehao,'update')"><strong>已上传周报</strong></el-menu-item> 
-     <img :src="img" class="headright">
-     <el-menu-item index="6" @click.native="message('6',xuehao,'update')" class="head headleft"><el-badge :is-dot='redicon' class="redicon"><img src="static/assets/message.png" class="messageimg"></img></el-badge></el-menu-item>
+    <img src="static/assets/zz.png" class="img">
+     <el-menu-item index="1" class="head" @click.native="heads('1','homepage')"><strong>首页</strong></el-menu-item>
+     <el-menu-item index="2" class="head" @click.native="heads('2','editor')"><strong>写周报</strong></el-menu-item>
+     <el-menu-item index="3" class="head" @click.native="heads('3','draft')"><strong>草稿箱</strong></el-menu-item>
+     <el-menu-item index="4" class="head" @click.native="heads('4','collection')"><strong>我的收藏</strong></el-menu-item>
+     <el-menu-item index="5" class="head" @click.native="heads('5','update')"><strong>已上传周报</strong></el-menu-item> 
+     <el-menu-item index="6" class="head" @click.native="heads('6','message')"><strong>通知</strong></el-menu-item> 
     </el-menu>
     </el-header>
     <el-container style="height:calc(100vh - 80px)">
     <el-aside  width="290px" style="background-color: rgb(255, 255, 255);border-right:1px solid #e6e6e6">
-    <el-row class="tac" v-show="asidemenu">
+    <el-row class="tac">
     <el-col :span="24">
     <el-menu :default-active="asideindex" class="el-menu-vertical-demo" active-text-color="#000000">  
-    <el-submenu v-for="(da,nums) in all" :key="nums" :index='nums.toString()'>   
+    <el-submenu index="1">   
         <template slot="title" >     
-          <span class="teamname"><strong>{{da.category}}</strong></span>
+          <span class="teamname"><strong>{{classmate[0].dvalue}}</strong></span>
         </template>
         <el-menu-item-group class="route">    
-          <el-menu-item :index="c.id"  @click.native="asides(c.id)" :key="c.id" v-for="(c,num) in da.list"><span class="teampeople">{{c.name}}</span></el-menu-item>
+          <el-menu-item :index="c.id"  @click.native="asides(c.id)" :key="c.id" v-for="(c,num) in classmate"><span class="teampeople">{{c.username}}</span></el-menu-item>
         </el-menu-item-group>
     </el-submenu>
     </el-menu>
     </el-col>
     </el-row>
 
-<el-row class="tac" v-show="mess" >
-  <el-col :span="24">
-    <el-menu default-active="0" class="el-menu-vertical-demo"  active-text-color="#000000">
-          <el-menu-item :index="index.toString()" style="height:auto;border-bottom:1px solid #e6e6e6" v-for="(da,index) in replymessage"  @click.native="read(da.article.content,da.article.id,da.article.uId,da.power)" :key="index">  <!--缺权限 -->
-          <div  style="height:40px;" >
-          <strong><span>{{da.name}}</span></strong>
-          <span class="timebutton"  v-text="time(da.createTime)"></span>
-          </div>
-          <div class="messag" style="height:40px;">{{da.txt}}</div>
-          </el-menu-item>
-    </el-menu>
-  </el-col>
-</el-row>
+
     </el-aside>
 
      <el-main style="padding:10px 0px 0px 0px;">
-      <router-view v-bind:msg='{category,name,xuehao,roots,collect,childmsg}' v-on:child-say="ddd"  v-on:homepage="homepage" v-on:coll="col" v-on:side="side"></router-view>
+      <router-view></router-view>
      </el-main>
       </el-container>
     </el-container>
 </template>
 <script>
+
   export default {
       data(){
           return {
-              headindex:'1',    //head的选中控制
-              asideindex:'0',       //aside的选中控制
-              redicon:false,   //控制红点
-              name:'',    //名字
-              xuehao:'04163074',    //学号
-              category:'',
-              img:'',
-              childmsg:{'id':'','text':'','uid':'','power':''},
-              roots:'',    //权限
-              collect:'',
-              asidemenu:true,   //控制左侧菜单隐藏显示
-              replymessage:'',   //所有回复消息
-              mess:true,     //控制左侧消息列表隐藏显示
-              all:'',
           }
       },
     methods: {
       asides(index){
-          this.asideindex=index;
-          this.headindex='0';
-          this.childmsg.uid=index;
-          this.$router.push('peoplewrite');
+        this.$store.commit("add_headindex",'0');
+        this.$store.commit("add_asideindex",index);
+        this.$store.commit("add_matexuehao",index);
+        this.$router.push('peoplewrite');
       },
-      heads(index,xuehao,rou){
-          this.asidemenu=true;
-          this.mess=false;
-          this.headindex=index;
-          this.asideindex='0';
-          this.childmsg.id='';
-          this.childmsg.text='';
-          this.childmsg.uid='';
-          this.childmsg.power='';
+      heads(index,rou){
+
+          this.$store.commit("add_headindex",index);
+          this.$store.commit("add_asideindex",'0');
           this.$router.push(rou);
       },
       time(ti){
           return ti.substr(5,6)+ti.substr(11,5);
       },
-      read(text,id,uId,power){
-          this.childmsg={'id':id,'text':text,'uid':uId,'power':power};
-          this.$router.push('weekly');
-      },
-      ddd(id,text,uidd,headindex,power){
-          this.childmsg={'id':id,'text':text,'uid':uidd,'power':power};
-          if(headindex=='2')
-          this.headindex=headindex;
-          if(headindex=='5')
-          this.headindex=headindex;
-      },
-      col(collection){
-          this.collect=collection;
-      },
-      side(a,b){
-          this.asidemenu=true;
-          this.mess=false;
-      },
-      message(index,xuehao,rou){
-          let _this=this;
-          _this.$http({
-              method:'post',   //请求所有回复
-              url:'./reply/getreplyArticleList.action',
-              params:{
-                  'uId':_this.xuehao,
-              }
-          })
-          .then(function(res){
-            if(res.data.data==''){
-                _this.$notify({
-                    message: '您目前还没有消息！',
-                    offset: 50,
-                    duration:2000,
-                });
-            }else{
-                var arr=res.data.data;
-                var hash = {};
-                arr = arr.reduce(function(item, next) {
-                hash[next.aId] ? '' : hash[next.aId] = true && item.push(next);
-                return item
-                }, [])
-                _this.replymessage = arr;
-                _this.childmsg={'id':_this.replymessage[0].article.id,'text':_this.replymessage[0].article.content,'uid':_this.replymessage[0].article.uId,'power':_this.replymessage[0].power};
-                _this.$router.push('weekly');
-                _this.asidemenu=false;
-                _this.mess=true;
-            }
-          })
-          .catch(function(error){
-              _this.$notify({
-                message: '信息加载失败！',
-                offset: 50,
-                type:'error',
-                duration:2000,
-            });
-          })
-          
-          this.redicon=false;
-      },
-      homepage(xuehao){
-          this.childmsg.uid=xuehao;
-      }
+    },
+    computed:{
+        classmate:function(){
+            return this.$store.getters.get_classmate;
+        },
+        headindex:function(){
+            return this.$store.getters.get_headindex;
+        },
+        asideindex:function(){
+            return this.$store.getters.get_asideindex;
+        }
     },
     mounted() {
         let _this=this;
-        _this.$http({
-                method:'post',
-                url:'./user/login.action',
-                params:{
-                }
-            })
-            .then(function(res){
-                _this.all=res.data.data//把所有数据放进data里
-                _this.roots=res.data.user.power;
-                _this.img=res.data.user.headImage;
-                _this.xuehao=res.data.user.id;
-                _this.category=res.data.user.category;
-                _this.name=res.data.user.name;
-                if(res.data.user.collection==null){
-                    _this.collect=[];
-                }
-                else{
-                    _this.collect=res.data.user.collection.split(",");
-                }
-                _this.$http({
-                    method:'post',  
-                    url:'./reply/hasReply.action',
-                    params:{
-                        'uId':_this.xuehao,
-                    }
-                })
-                .then(function(res){
-                    if(res.data.status==0){
-                        _this.redicon=false;
-                    }else if(res.data.status==200){
-                        _this.redicon=true;
-                    }
-                })
-                .catch(function(error){
-                    _this.$notify({
-                        message: '消息加载失败！',
-                        offset: 50,
-                        type:'error',
-                        duration:2000,
-                    });
-                })
-                setTimeout(function(){_this.$router.push('homepage');},500);  
-            })
-            .catch(function(error){
-                _this.$notify({
-                message: '信息加载失败了！',
-                offset: 50,
-                type:'error',
-                duration:2000,
-            });
-        })
+        _this.$store.dispatch('add_selfmes',{
+            gologin:function(){
+                _this.$router.push('login');
+            },
+            gohome:function(){
+                _this.$router.push('homepage');
+            }
+        });
     },
   }
 </script>

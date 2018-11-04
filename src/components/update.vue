@@ -3,10 +3,10 @@
 <img src="static/assets/bg.jpg" style="width:65%" v-if="imgb">
 <el-card class="box-card" v-for="(datas,index) in data" :key="datas.id" shadow="always" :body-style="{padding:'5px 30px 10px 30px' , border:'0px'}">
   <div slot="header" class="clearfix">
-    <span style="font-size:13px"><strong v-text="time(datas.createDate)"></strong></span>
+    <span style="font-size:13px"><strong v-text="time(datas.createTime)"></strong></span>
     <el-button style="float: right; padding: 3px 0; color:#909399; border:0" type="text" :plain="true" v-on:click="deletee(datas.id,index)">删除</el-button>
   </div>
-  <div class="text-item" @click="readtext(datas.content,datas.id,datas.uId,datas.power)">
+  <div class="text-item" @click="readtext(datas.id,datas.uId)">
     {{datas.txt}}
   </div>
 </el-card>
@@ -18,7 +18,7 @@ export default{
   props:['msg'],
   data(){
     return{
-      data:'',
+      data:[],
       imgb:false,
     }     
   },
@@ -27,7 +27,7 @@ export default{
             let _this=this;
             _this.$http({
                 method:'post',
-                url:'./article/deleteArticle.action',
+                url:'api/classweek/article/deleteArticle.action',
                 params:{
                     'id':id,
                 }
@@ -55,18 +55,19 @@ export default{
     time(ti){
         return ti.substr(0,10);
     },
-    readtext(text,id,uid,power){    //text为文章文本内容，id为文章id,uid为文章作者id
-            this.$emit('child-say',id,text,uid,power,'1');
-            this.$router.push('weekly');
-        } 
+    readtext(id,uId){    //id为文章id,uid为文章作者id
+        this.$store.commit("add_peoid",id);
+        this.$store.commit("add_peoxuehao",uId);
+        this.$router.push('weekly');
+    } 
    },
     mounted(){
       let _this=this;
       _this.$http({
         method:'post',
-        url:'./article/getArticleList.action',
+        url:'api/classweek/article/getArticleList.action',
         params:{
-            'uId':this.msg.xuehao,
+            'uId':_this.$store.getters.get_xuehao,
         }
       })
     .then(function(res){
@@ -77,8 +78,6 @@ export default{
                     _this.imgb=false;
                 }
       _this.data = res.data.data.reverse();
-      if(_this.data.length==0){
-        }
     })
     .catch(function(error){
     })

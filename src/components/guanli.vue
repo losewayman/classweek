@@ -1,66 +1,41 @@
 <template> 
-<div>
-<div id="log" v-show="log">
-<el-input v-model="input" type="password" placeholder="请输入密码"></el-input>
-<button id="butt" @click="is()">登  录</button>
-</div>
-  <el-table :data="tableData" style="width: 100%" v-show="islog">
-    <el-table-column
-      label="姓名"
-      width="180">
-      <template slot-scope="scope">
-        <span style="margin-left: 10px">{{ scope.row.name }}</span>
-      </template>
-    </el-table-column>
-       <el-table-column
-      label="分组"
-      width="180">
-      <template slot-scope="scope">
-        <span style="margin-left: 10px">{{ scope.row.category }}</span>
-      </template>
-    </el-table-column>
-    <el-table-column
-      label="分组"
-      width="180">
-      <template slot-scope="scope">
-        <el-select v-model="rooter[scope.$index]" placeholder="请选择分组">
-    <el-option label="开发组员" :value="-1"></el-option>
-    <el-option label="运维组员" :value="-2"></el-option>
-    <el-option label="产品组员" :value="-3"></el-option>
-    <el-option label="开发负责人" :value="1"></el-option>
-    <el-option label="运维负责人" :value="2"></el-option>
-    <el-option label="产品负责人" :value="3"></el-option>
-  </el-select>
-      </template>
-    </el-table-column>
-    <el-table-column label="操作">
-      <template slot-scope="scope">
-        <el-button
-          size="mini"
-          @click.native="handleEdit(rooter[scope.$index], scope.row.id)">提交</el-button>
-        <el-button
-          size="mini"
-          type="danger"
-          @click.native="handleDelete(scope.$index,scope.row.id)">删除</el-button>
-        
-      </template>
-    </el-table-column>
-  </el-table>
+<div style="min-width:960px">
+  <div id="log" v-show="log">
+    <el-input v-model="input" type="password" placeholder="请输入密码"></el-input>
+    <button id="butt" @click="is()">登  录</button>
   </div>
+  <div v-show="islog">
+    <div class="guhead">周报系统后台管理</div>
+    <div class="left">
+      <div class="list" v-bind:class="send" v-on:click="bianrou('send')">发布通知</div>
+      <div class="list" v-bind:class="people" v-on:click="bianrou('people')">管理人员</div>
+      <div class="list" v-bind:class="week" v-on:click="bianrou('week')">管理周报</div>
+    </div>
+    <div class="main"><router-view></router-view></div>
+  </div>
+</div>
 </template>
 <script>
   export default {
     data() {
       return {
-        rooter:[],
-        tableData:[],
-        password:'zypcgzs',
+        password:'666666',
         input:'',
         log:true,
-        islog:false
+        islog:false,
+        send:'yes',
+        people:'no',
+        week:'no'
       }
     },
     methods: {
+      bianrou(rou){
+        this.send="no";
+        this.people="no";
+        this.week="no";
+        this[rou]='yes';
+        this.$router.push(rou);
+      },
       is(){
         if(this.input===this.password){
           this.log=false;
@@ -136,28 +111,7 @@
     },
    mounted() {
       let _this=this;
-        _this.$http({
-            url:'./getUserList.action',
-            method:'post',
-            params:{
-            }
-          })
-          .then(function(res){
-            if(res.data.status=='200'){
-              _this.tableData=res.data.data;
-              for(let a=0;a<_this.tableData.length;a++){
-                _this.rooter.push(_this.tableData[a].power);
-              }
-            }
-          })
-          .catch(function(error){
-              _this.$notify({
-                message:"信息加载失败",
-                offset: 50,
-                type:'error',
-                duration:1500,
-              });
-          })
+      _this.$router.push("send");
       }
   }
 </script>
@@ -177,5 +131,45 @@
   background-color:#33a3dc;
   border-width:0px;
   border-radius:3px;
+}
+.guhead{
+  width:100%;
+  height:70px;
+  background-color:#72777b;
+  line-height:70px;
+  text-align:center;
+  color:#f2eada;
+  font-size:23px;
+  font-weight:600;
+  letter-spacing:8px;
+
+}
+.left{
+  width:300px;
+  height:calc(100vh - 70px);
+  background-color:#a1a3a6;
+  float:left;
+}
+.list{
+  width:100%;
+  height:60px;
+  line-height:60px;
+  color:white;
+  font-size:16px;
+  padding-left:60px;
+  font-weight:550;
+  box-sizing:border-box;
+}
+.yes{
+  background-color:#d3d7d4;
+}
+.no{
+  background-color:#a1a3a6;
+}
+.main{
+  width:calc(100% - 300px);
+  height:calc(100vh - 70px);
+  overflow:auto;
+  float:left;
 }
 </style>

@@ -2,31 +2,29 @@
 <div>
 <div style="border-bottom:1px solid rgb(230, 230, 230);margin-bottom:10px;padding:10px 15px;">
 <el-button  size='small' style="background-color:#f2f2f2;font-size:12px;border:1px solid #a1a1a1;color:black;" @click="back()">返回</el-button>
-<el-button v-show="replyshow" size='small' style="margin:10px;background-color:#0945C4;font-size:12px;color:white" @click="reply()">回复</el-button>
 <el-button v-show="collectshow" size='small' style="background-color:#f2f2f2;font-size:12px;border:1px solid #a1a1a1;color:black;" @click="bucollect()" :disabled="isDisable">{{collecttext}}</el-button>
 </div >
 
 
-<div style="padding:15px;" v-show="sendshow">
-<el-input type="textarea" class="area" v-model="replymsg"></el-input>
-<el-button size='small' style="margin-top:10px;background-color:#0945C4;font-size:12px;color:white" @click="send()" :disabled="issend">发送</el-button>
-</div>
+
+
+<div class="contents" v-html="text"></div>
+
 
 <el-card class="box-card" shadow="never" v-for="(o,index) in replyall" :key="index" :body-style="{padding:'0px'}">
   <div class="replytext replyitem">
-    <strong>{{ o.name + ':'}}</strong>
+    <strong>{{ o.username }}</strong><span> {{time(o.createTime)}}</span>
   </div>
-  <div class="replytext replyitem" v-text="time(o.createTime)"></div>
   <div class="replytext replyitem">
     {{ o.txt }}
   </div>
 </el-card>
 
 
-<!--测试数据-->
-
-
-<div class="contents" v-html="text"></div>
+<div style="padding:15px;">
+<el-input type="textarea" class="area" v-model="replymsg"></el-input>
+<el-button size='small' style="margin-top:10px;background-color:#0945C4;font-size:12px;color:white" @click="send()" >发送</el-button>
+</div>
 </div>
 </template>
 <script>
@@ -35,34 +33,27 @@ export default{
     data(){
         return{
             isDisable:false,
-            issend:true,
+
             replymsg:'',     //回复内容  
             replyall:'',     //本篇文章上所有回复内容
-            uid:'',     //本篇文章作者学号
-            loginuid:'',   //登陆人学号 
-            root:'',   //登陆人权限
-            collect:'',
-            power:'',  //被查看人的权限
-            id:'',   //本篇文章id
             text:'',   //本篇文章内容
-            delshow:false,    //控制删除按钮
-            replyshow:false,     //控制回复按钮
-            collectshow:false,      //控制收藏按钮
+            collect:'',
+            collectshow:true,      //控制收藏按钮
             collecttext:'收藏',    //收藏按钮显示
-            sendshow:false,     //控制发送框
+            id:'',   //本篇文章id
+            uid:'',     //本篇文章作者学号
+
         }
     },
     methods:{
         back(){
             this.$router.go(-1);
-            this.$emit('side','1','0');
         },
         reply(){
             let _this =this;
-            _this.sendshow=true;
         },
         time(ti){
-            return ti.substr(0,10);
+            return ti.substr(0,16);
         },
         bucollect(){
             this.isDisable = true
@@ -71,16 +62,16 @@ export default{
         }, 1000);
             let _this =this;
             if(_this.collecttext == '收藏'){                     //根据收藏按钮状态来判断请求取消收藏或添加收藏
-                var url = './user/addColl.action';
+                var url = 'api/classweek/user/addColl.action';
             }
             if(_this.collecttext == '已收藏'){
-                var url = './user/deleteColl.action';
+                var url = 'api/classweek/user/deleteColl.action';
             }
-            _this.$http({    //请求收藏接口
+            _this.$http({    //请求相关信息
                 method:'post',
                 url:url,
-                params:{
-                    'id':_this.loginuid,
+                data:{
+                    'id':_this.$store.getters.get_xuehao,
                     'aId':_this.id,
                 }
             })
@@ -94,14 +85,10 @@ export default{
                         duration:2000,
                     });
                     _this.collecttext ='已收藏';
-                    var obj=res.data.data.collection;
-                    if(obj==null || obj==''){
-                        obj=[];
-                    }
-                    else{
-                        obj=obj.split(',');
-                    }
-                    _this.$emit('coll',obj);        //
+                    console.log(_this.collect);
+                    _this.collect.push(_this.id);
+                    console.log(_this.collect);
+                    _this.$store.commit("add_collect",_this.collect);
                 }
                 if(sc == '已收藏'){
                     _this.$notify({
@@ -111,14 +98,8 @@ export default{
                         duration:2000,
                     });
                     _this.collecttext ='收藏';
-                    var obj=res.data.data.collection;
-                    if(obj==null || obj==''){
-                        obj=[];
-                    }
-                    else{
-                        obj=obj.split(',');
-                    }
-                    _this.$emit('coll',obj);    //
+                     _this.collect.splice(_this.collect.indexOf(_this.id),1);
+                    _this.$store.commit("add_collect",_this.collect);
                 }
             })
             .catch(function(error){
@@ -134,11 +115,11 @@ export default{
             let _this =this;
             _this.$http({
                 method:'post',
-                url:'./replyArticle/addReplyArticle.action',
-                params:{
+                url:'api/classweek/replyArticle/addReplyArticle.action',
+                data:{
                     'aId':_this.id,
                     'txt':_this.replymsg,
-                    'uId':_this.loginuid,
+                    'uId':_this.$store.getters.get_xuehao,
                 }
             })
             .then(function(res){
@@ -152,8 +133,8 @@ export default{
                 if(date<=9){
                     date="0"+date;
                 }
-                var dateformat=year+"-"+month+"-"+date;
-                _this.replyall.unshift({'createTime':dateformat,'name':_this.msg.name,'txt':_this.replymsg});
+                var dateformat=year+"-"+month+"-"+date + " " + datetime.getHours() + ":" + datetime.getMinutes();
+                _this.replyall.push({'createTime':dateformat,'username':_this.$store.getters.get_name,'txt':_this.replymsg});
                 _this.replymsg="";
             })
             .catch(function(error){
@@ -166,110 +147,36 @@ export default{
             })
         },
     },
-    watch:{
-        replymsg:function(){
-            let _this=this;
-            if(_this.replymsg==""){
-                _this.issend=true;
-            }else{
-                _this.issend=false;
-            }
-        },
-        msg:function(){
-        this.power = this.msg.childmsg.power;
-        this.uid = this.msg.childmsg.uid;
-        this.id = this.msg.childmsg.id;
-        this.text = this.msg.childmsg.text;
-        this.collect=this.msg.collect;
-        let _this =this;
-        if(_this.loginuid == _this.uid){
-            _this.collectshow = false;
-        }else{
-            _this.collectshow = true;
-            for(var index=0;index<_this.collect.length;index++){
-                if(_this.collect[index]==_this.id){
-                    _this.collecttext="已收藏";
-                   break;
-                } 
-                
-            }
-        }
-        if(_this.root>0){
-            if(_this.power<0 && -_this.power==this.root){
-                _this.replyshow=true;
-            }
-            if(_this.power==_this.root){
-                _this.replyshow=true;
-            }  
-        }
-        if(_this.root<0){
-            if(_this.loginuid == _this.uid)
-            _this.replyshow=true;
-        }
- 
-        if(_this.replyshow == true){
-           _this.$http({     //请求本篇文章上的所有回复
-                method:'post',
-                url:'./reply/getreplyArticleListByaId.action',
-                params:{
-                    'aId':_this.id,
-                }
-            })
-            .then(function(res){
-                _this.replyall=res.data.data.reverse();
-            })
-            .catch(function(error){
-            })
-        }
-       }
-    },
+
     mounted() {
-        this.root = this.msg.roots;
-        this.loginuid = this.msg.xuehao;
-        this.collect=this.msg.collect;
-        this.power = this.msg.childmsg.power;
-        this.uid = this.msg.childmsg.uid;
-        this.id = this.msg.childmsg.id;
-        this.text = this.msg.childmsg.text;
-        let _this =this;
-        if(_this.loginuid == _this.uid){
-            _this.collectshow = false;
+        let _this = this;
+        _this.collect = _this.$store.getters.get_collect;
+        _this.id = _this.$store.getters.get_peoid;
+        _this.uid = _this.$store.getters.get_peoxuehao;
+        _this.$http({     //请求本篇文章上的所有回复
+            method:'post',
+            url:'api/classweek/article/getArticleById.action',
+            params:{
+                'id':_this.$store.getters.get_peoid,
+            }
+        })
+        .then(function(res){
+            if(res.data.status=="200"){
+                _this.text=res.data.data.content;
+                _this.replyall=res.data.data.replyArticle;
+            }
+        })
+        .catch(function(error){
+        })
+        if(_this.uid==_this.$store.getters.get_xuehao){
+            this.collectshow=false;
         }else{
-            _this.collectshow = true;
-            for(var index=0;index<_this.collect.length;index++){
+            for(let index=0;index<_this.collect.length;index++){
                 if(_this.collect[index]==_this.id){
                     _this.collecttext="已收藏";
                 }
             }
         }
-        if(_this.root>0){
-            if(_this.power<0 && -_this.power==this.root){
-                _this.replyshow=true;
-            }
-            if(_this.power==_this.root){
-                _this.replyshow=true;
-            }  
-        }
-        if(_this.root<0){
-            if(_this.loginuid == _this.uid)
-            _this.replyshow=true;
-        }
- 
-        if(_this.replyshow == true){
-           _this.$http({     //请求本篇文章上的所有回复
-                method:'post',
-                url:'./reply/getreplyArticleListByaId.action',
-                params:{
-                    'aId':_this.id,
-                }
-            })
-            .then(function(res){
-                _this.replyall=res.data.data.reverse();
-            })
-            .catch(function(error){
-            })
-        }
-              
     },
 }
 </script>

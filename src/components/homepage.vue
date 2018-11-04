@@ -1,108 +1,133 @@
 <template>
-<div style="padding:5px 25px;">
-<el-row  :gutter="80" style="margin-left: 0px; margin-right: 0px;">
-  <el-col :span="4" style="margin:10px 0px" v-for="(o, index) in yes" :key="o.id">
-    <el-card :body-style="{ padding: '0px'}" style="border:0px;" shadow="never" @click.native="homename(o.id)">
-    <div style="background-color:black">
-      <img :src="o.headImage" class="image"/>
-      </div>
-      <div class="foot" v-text="o.name"></div>
-    </el-card>
-  </el-col>
- <el-col :span="4" style="margin:10px 0px" v-for="(o, index) in no" :key="o.id">
-    <el-card :body-style="{ padding: '0px'}" style="border:0px;" shadow="never" @click.native="homename(o.id)">
-    <div style="background-color:black">
-      <img :src="o.headImage" class="image homecard"/>
-      </div>
-      <div class="foot" v-text="o.name"></div>
-    </el-card>
-  </el-col>
-</el-row>
+<div>
+<div id="editor_head" style="border-bottom:1px solid rgb(230, 230, 230);padding-bottom:10px;margin-bottom:10px;">
+<el-select v-model="type" placeholder="请选择文章分类" >
+  <el-option  v-for="(typ,index) in home_type" :label="typ.dvalue" :value="typ.id" :key="index"></el-option>
+</el-select>
+</div>
+<el-card class="box-card card" v-for="(datas,index) in data" :key="datas.id" shadow="always" :body-style="{padding:'5px 30px 10px 30px' , border:'0px'}">
+  <div slot="header" class="clearfix">
+    <strong><span  style="font-size:14px">{{name(datas.uId)}}</span></strong>
+    <span  style="font-size:13px;margin-left:20px;"  v-text="time(datas.createTime)"></span>
+  </div>
+  <div class="texts item" @click="readtext(datas.id,datas.uId)">
+    {{datas.txt}}
+  </div>
+</el-card>
+
+<!--测试数据-->
+
+
+
 </div>
 </template>
 <script>
 export default{
-  props:['msg'],
-    data() {
-    return {
-      kk:"static/assets/w.jpg",
-      uid:'',
-      yes:'',
-      no:'',
-    }
-  },
-  methods:{
-    homename(xuehao){//此人学号
-      this.$emit('homepage',xuehao);
-      this.$router.push('peoplewrite');
-    }
-  },
-  watch:{
-    msg:function(){
-       let _this=this;
+    data(){
+        return{
+            data:[],    //登陆用户的草稿数据
+            type:null
+        }
+    },
+    methods:{
+        time(ti){
+            return ti.substr(0,10);
+        },
+        readtext(aid,uId){
+            this.$store.commit("add_peoid",aid);
+            this.$store.commit("add_peoxuehao",uId);
+            this.$router.push('weekly');
+        },
+        reqs(ty){
+            let _this=this;
         _this.$http({
             method:'post',
-            url:'./user/getUserList.action',
+            url:'api/classweek/article/getArticleListByType.action',
             params:{
-                'id':_this.msg.xuehao,
-                'category':_this.msg.category,
+                'grade':_this.$store.getters.get_logclass,
+                'type':ty
             }
         })
         .then(function(res){
-          if(_this.msg.roots>=0){
-            _this.yes=res.data.data[0].yes;
-            _this.no=res.data.data[1].no;
-          }
-          else if(_this.msg.roots<0){
-            _this.yes=res.data.data[0].yes;
-          }
-            
+            _this.data=res.data.data.reverse();
         })
         .catch(function(error){
-            _this.$notify({
-                message: '信息加载失败！',
-                offset: 50,
-                type:'error',
-                duration:2000,
-            });
         })
-    }
-  },
-  mounted(){
-    let _this=this;
-        _this.$http({
-            method:'post',
-            url:'./user/getUserList.action',
-            params:{
-                'id':_this.msg.xuehao,
-                'category':_this.msg.category,
+        },
+        name(uid){
+            var mate = this.$store.getters.get_classmate;
+            for(var i=0;i<mate.length;i++){
+                if(mate[i].id == uid){ 
+                    return mate[i].username;
+                }
             }
-        })
-        .then(function(res){
-          if(_this.msg.roots>=0){
-            _this.yes=res.data.data[0].yes;
-            _this.no=res.data.data[1].no;
-          }
-          else if(_this.msg.roots<0){
-            _this.yes=res.data.data[0].yes;
-          }
-        })
-        .catch(function(error){
-        })
-  }
+        }
+    },
+    computed:{
+        home_type:function(){
+          return this.$store.getters.get_type;
+        }
+    },
+    watch:{
+        
+        type(){
+            this.data=[];
+            this.reqs(this.type);
+        }
+    },
+    mounted() {
+        var t=this.$store.getters.get_type;
+        if(t.length!=0){
+            this.type=t[0].id;
+        }
+    },
 }
 </script>
-<style>
-  .image {
-    width: 100%;
-    display: block;
+<style scoped>
+  .texts {
+    font-size: 13px;
   }
-.homecard{
-  opacity: 0.3;
+
+  .item {
+    height:30px;
+    line-height:30px;
+    text-align:left;
+    white-space: nowrap;
+    text-overflow:ellipsis;
+    overflow:hidden;
+  }
+  .card{
+      border-width:0px 0px 0px 0px !important;
+      margin:0px 0px 10px 100px!important;
+  }
+
+  .clearfix:before,
+  .clearfix:after {
+    display: table;
+    content: "";
+  }
+  .clearfix:after {
+    clear: both
+  }
+
+  .box-card {
+    width: 800px;
+  }
+</style>
+<style>
+.el-card__header{
+    padding:10px 30px 0px 30px !important;
+    border:0px !important;
 }
-.foot{
-  text-align:center;
-  line-height:40px;
-  height:40px;
+.toolbar{
+  border-bottom:1px solid rgb(230, 230, 230);
+  padding-bottom:5px;
+}
+.w-e-menu{
+  z-index:100 !important;
+}
+#editor_head input{
+  height:32px;
+  line-height:32px;
 }
 </style>

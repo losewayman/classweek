@@ -3,10 +3,10 @@
 <img src="static/assets/bg.jpg" style="width:70%" v-if="imgb">
 <el-card class="box-card card" v-for="(datas,index) in data" :key="datas.id" shadow="always" :body-style="{padding:'5px 30px 10px 30px' , border:'0px'}">
   <div slot="header" class="clearfix">
-    <span style="font-size:13px;"><strong v-text="time(datas.createDate)"></strong></span>
+    <span style="font-size:13px;"><strong v-text="time(datas.createTime)"></strong></span>
     <el-button style="float: right; padding: 3px 0; color:#909399" type="text" @click="deletes(datas.id,index)">删除</el-button>
   </div>
-  <div class="texts item" @click="readtext(datas.content,datas.id,datas.uId)">
+  <div class="texts item" @click="readtext(datas.content,datas.id,datas.type)">
     {{datas.txt}}
   </div>
 </el-card>
@@ -19,10 +19,9 @@
 </template>
 <script>
 export default{
-    props:['msg'],
     data(){
         return{
-            data:'',    //登陆用户的草稿数据
+            data:[],    //登陆用户的草稿数据
             imgb:false,
         }
     },
@@ -31,7 +30,7 @@ export default{
             let _this=this;
             _this.$http({
                 method:'post',
-                url:'./article/deleteActicle.action',
+                url:'api/classweek/article/deleteActicle.action',
                 params:{
                     'id':id,
                 }
@@ -59,8 +58,12 @@ export default{
         time(ti){
             return ti.substr(0,10);
         },
-        readtext(text,id,uid){    //text为文章文本内容，id为文章id,uid为文章作者id
-            this.$emit('child-say',id,text,uid,'2');
+        readtext(content,id,type){    //text为文章文本内容，id为文章id,uid为文章作者id
+            this.$store.commit("add_headindex",'2');
+            this.$store.commit("add_asideindex",'0');
+            this.$store.commit("add_editorid",id);
+            this.$store.commit("add_editortype",type);
+            this.$store.commit("add_editorcontent",content);
             this.$router.push('editor');
         } 
     },
@@ -68,9 +71,9 @@ export default{
         let _this=this;
         _this.$http({
             method:'post',
-            url:'./article/getNoActicleList.action',
+            url:'api/classweek/article/getNoActicleList.action',
             params:{
-                'uId':this.msg.xuehao,
+                'uId':_this.$store.getters.get_xuehao,
             }
         })
         .then(function(res){
@@ -80,9 +83,11 @@ export default{
                 else{
                     _this.imgb=false;
                 }
+                
             _this.data=res.data.data.reverse();
         })
         .catch(function(error){
+
         })
     },
 }
